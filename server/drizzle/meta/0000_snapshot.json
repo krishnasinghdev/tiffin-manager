@@ -1,0 +1,1758 @@
+{
+  "id": "bf44d78e-e18f-48cc-8d8f-515bda1e7086",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.bills": {
+      "name": "bills",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "vendor_id": {
+          "name": "vendor_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "customer_id": {
+          "name": "customer_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "due_date": {
+          "name": "due_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bill_date": {
+          "name": "bill_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bill_no": {
+          "name": "bill_no",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bill_type": {
+          "name": "bill_type",
+          "type": "plan_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'regular'"
+        },
+        "payment_status": {
+          "name": "payment_status",
+          "type": "payment_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'unpaid'"
+        },
+        "bill_detail": {
+          "name": "bill_detail",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "total_amount": {
+          "name": "total_amount",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "remaining_amount": {
+          "name": "remaining_amount",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'0.00'"
+        },
+        "discount": {
+          "name": "discount",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'0.00'"
+        },
+        "note": {
+          "name": "note",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_closed": {
+          "name": "is_closed",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "bills_vendor_id_vendors_id_fk": {
+          "name": "bills_vendor_id_vendors_id_fk",
+          "tableFrom": "bills",
+          "tableTo": "vendors",
+          "columnsFrom": ["vendor_id"],
+          "columnsTo": ["id"],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "bills_customer_id_customers_id_fk": {
+          "name": "bills_customer_id_customers_id_fk",
+          "tableFrom": "bills",
+          "tableTo": "customers",
+          "columnsFrom": ["customer_id"],
+          "columnsTo": ["id"],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.customers": {
+      "name": "customers",
+      "schema": "",
+      "columns": {
+        "vendor_id": {
+          "name": "vendor_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address": {
+          "name": "address",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "customer_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'active'"
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar(12)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plan_type": {
+          "name": "plan_type",
+          "type": "plan_type",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'regular'"
+        },
+        "_id": {
+          "name": "_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "last_bill_date": {
+          "name": "last_bill_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "contact_method": {
+          "name": "contact_method",
+          "type": "contact_method",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'whatsapp'"
+        },
+        "plan_id": {
+          "name": "plan_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "customers_vendor_id_vendors_id_fk": {
+          "name": "customers_vendor_id_vendors_id_fk",
+          "tableFrom": "customers",
+          "tableTo": "vendors",
+          "columnsFrom": ["vendor_id"],
+          "columnsTo": ["id"],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "customers_plan_id_plans_id_fk": {
+          "name": "customers_plan_id_plans_id_fk",
+          "tableFrom": "customers",
+          "tableTo": "plans",
+          "columnsFrom": ["plan_id"],
+          "columnsTo": ["id"],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "customers_phone_unique": {
+          "name": "customers_phone_unique",
+          "nullsNotDistinct": false,
+          "columns": ["phone"]
+        },
+        "customers__id_unique": {
+          "name": "customers__id_unique",
+          "nullsNotDistinct": false,
+          "columns": ["_id"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.deliveries": {
+      "name": "deliveries",
+      "schema": "",
+      "columns": {
+        "customer_id": {
+          "name": "customer_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "month_year": {
+          "name": "month_year",
+          "type": "char(7)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "day1": {
+          "name": "day1",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "day2": {
+          "name": "day2",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "day3": {
+          "name": "day3",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "day4": {
+          "name": "day4",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "day5": {
+          "name": "day5",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "day6": {
+          "name": "day6",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "day7": {
+          "name": "day7",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "day8": {
+          "name": "day8",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "day9": {
+          "name": "day9",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "day10": {
+          "name": "day10",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "day11": {
+          "name": "day11",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "day12": {
+          "name": "day12",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "day13": {
+          "name": "day13",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "day14": {
+          "name": "day14",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "day15": {
+          "name": "day15",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "day16": {
+          "name": "day16",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "day17": {
+          "name": "day17",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "day18": {
+          "name": "day18",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "day19": {
+          "name": "day19",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "day20": {
+          "name": "day20",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "day21": {
+          "name": "day21",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "day22": {
+          "name": "day22",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "day23": {
+          "name": "day23",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "day24": {
+          "name": "day24",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "day25": {
+          "name": "day25",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "day26": {
+          "name": "day26",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "day27": {
+          "name": "day27",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "day28": {
+          "name": "day28",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "day29": {
+          "name": "day29",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "day30": {
+          "name": "day30",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "day31": {
+          "name": "day31",
+          "type": "char(3)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AAA'"
+        },
+        "add_ons": {
+          "name": "add_ons",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "deliveries_customer_id_customers_id_fk": {
+          "name": "deliveries_customer_id_customers_id_fk",
+          "tableFrom": "deliveries",
+          "tableTo": "customers",
+          "columnsFrom": ["customer_id"],
+          "columnsTo": ["id"],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.error_logs": {
+      "name": "error_logs",
+      "schema": "",
+      "columns": {
+        "staff_id": {
+          "name": "staff_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "error_message": {
+          "name": "error_message",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "error_stack": {
+          "name": "error_stack",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "error_code": {
+          "name": "error_code",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "path": {
+          "name": "path",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "method": {
+          "name": "method",
+          "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "severity": {
+          "name": "severity",
+          "type": "error_severity",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'medium'"
+        },
+        "request_data": {
+          "name": "request_data",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "resolved": {
+          "name": "resolved",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "error_logs_staff_id_staffs_id_fk": {
+          "name": "error_logs_staff_id_staffs_id_fk",
+          "tableFrom": "error_logs",
+          "tableTo": "staffs",
+          "columnsFrom": ["staff_id"],
+          "columnsTo": ["id"],
+          "onDelete": "set null",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.expenses": {
+      "name": "expenses",
+      "schema": "",
+      "columns": {
+        "date": {
+          "name": "date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "month_year": {
+          "name": "month_year",
+          "type": "varchar(7)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "amount": {
+          "name": "amount",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "varchar(28)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "note": {
+          "name": "note",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "staff_id": {
+          "name": "staff_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "vendor_id": {
+          "name": "vendor_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "expenses_staff_id_staffs_id_fk": {
+          "name": "expenses_staff_id_staffs_id_fk",
+          "tableFrom": "expenses",
+          "tableTo": "staffs",
+          "columnsFrom": ["staff_id"],
+          "columnsTo": ["id"],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "expenses_vendor_id_vendors_id_fk": {
+          "name": "expenses_vendor_id_vendors_id_fk",
+          "tableFrom": "expenses",
+          "tableTo": "vendors",
+          "columnsFrom": ["vendor_id"],
+          "columnsTo": ["id"],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.notices": {
+      "name": "notices",
+      "schema": "",
+      "columns": {
+        "vendor_id": {
+          "name": "vendor_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date": {
+          "name": "date",
+          "type": "varchar(16)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "time": {
+          "name": "time",
+          "type": "varchar(16)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "notice_status",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'pending'"
+        },
+        "detail": {
+          "name": "detail",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "notices_vendor_id_vendors_id_fk": {
+          "name": "notices_vendor_id_vendors_id_fk",
+          "tableFrom": "notices",
+          "tableTo": "vendors",
+          "columnsFrom": ["vendor_id"],
+          "columnsTo": ["id"],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.payments": {
+      "name": "payments",
+      "schema": "",
+      "columns": {
+        "vendor_id": {
+          "name": "vendor_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "customer_id": {
+          "name": "customer_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bill_id": {
+          "name": "bill_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "amount": {
+          "name": "amount",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "payment_date": {
+          "name": "payment_date",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "payment_mode": {
+          "name": "payment_mode",
+          "type": "payment_mode",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "payments_vendor_id_vendors_id_fk": {
+          "name": "payments_vendor_id_vendors_id_fk",
+          "tableFrom": "payments",
+          "tableTo": "vendors",
+          "columnsFrom": ["vendor_id"],
+          "columnsTo": ["id"],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "payments_customer_id_customers_id_fk": {
+          "name": "payments_customer_id_customers_id_fk",
+          "tableFrom": "payments",
+          "tableTo": "customers",
+          "columnsFrom": ["customer_id"],
+          "columnsTo": ["id"],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "payments_bill_id_bills_id_fk": {
+          "name": "payments_bill_id_bills_id_fk",
+          "tableFrom": "payments",
+          "tableTo": "bills",
+          "columnsFrom": ["bill_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.plans": {
+      "name": "plans",
+      "schema": "",
+      "columns": {
+        "vendor_id": {
+          "name": "vendor_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plan_name": {
+          "name": "plan_name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "plan_description": {
+          "name": "plan_description",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "lunch": {
+          "name": "lunch",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "dinner": {
+          "name": "dinner",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "breakfast": {
+          "name": "breakfast",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "total_tiffins": {
+          "name": "total_tiffins",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "price_per_tiffin": {
+          "name": "price_per_tiffin",
+          "type": "numeric(10, 2)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "plans_vendor_id_vendors_id_fk": {
+          "name": "plans_vendor_id_vendors_id_fk",
+          "tableFrom": "plans",
+          "tableTo": "vendors",
+          "columnsFrom": ["vendor_id"],
+          "columnsTo": ["id"],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.push_subscriptions": {
+      "name": "push_subscriptions",
+      "schema": "",
+      "columns": {
+        "endpoint": {
+          "name": "endpoint",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "auth": {
+          "name": "auth",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "p256dh": {
+          "name": "p256dh",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "staff_id": {
+          "name": "staff_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "push_subscriptions_staff_id_staffs_id_fk": {
+          "name": "push_subscriptions_staff_id_staffs_id_fk",
+          "tableFrom": "push_subscriptions",
+          "tableTo": "staffs",
+          "columnsFrom": ["staff_id"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "push_subscriptions_endpoint_unique": {
+          "name": "push_subscriptions_endpoint_unique",
+          "nullsNotDistinct": false,
+          "columns": ["endpoint"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.staffs": {
+      "name": "staffs",
+      "schema": "",
+      "columns": {
+        "vendor_id": {
+          "name": "vendor_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "role": {
+          "name": "role",
+          "type": "role",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'staff'"
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "password": {
+          "name": "password",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar(12)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "staff_role": {
+          "name": "staff_role",
+          "type": "varchar(28)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "staff_id": {
+          "name": "staff_id",
+          "type": "varchar(8)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_id": {
+          "name": "_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "access_token": {
+          "name": "access_token",
+          "type": "varchar(512)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "access_token_expires": {
+          "name": "access_token_expires",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "verification_token": {
+          "name": "verification_token",
+          "type": "varchar(512)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "verification_token_expires": {
+          "name": "verification_token_expires",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "staffs_vendor_id_vendors_id_fk": {
+          "name": "staffs_vendor_id_vendors_id_fk",
+          "tableFrom": "staffs",
+          "tableTo": "vendors",
+          "columnsFrom": ["vendor_id"],
+          "columnsTo": ["id"],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "staffs_phone_unique": {
+          "name": "staffs_phone_unique",
+          "nullsNotDistinct": false,
+          "columns": ["phone"]
+        },
+        "staffs_staff_id_unique": {
+          "name": "staffs_staff_id_unique",
+          "nullsNotDistinct": false,
+          "columns": ["staff_id"]
+        },
+        "staffs__id_unique": {
+          "name": "staffs__id_unique",
+          "nullsNotDistinct": false,
+          "columns": ["_id"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.staff_attendances": {
+      "name": "staff_attendances",
+      "schema": "",
+      "columns": {
+        "vendor_id": {
+          "name": "vendor_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "staff_id": {
+          "name": "staff_id",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "month_year": {
+          "name": "month_year",
+          "type": "char(7)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "day1": {
+          "name": "day1",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "day2": {
+          "name": "day2",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "day3": {
+          "name": "day3",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "day4": {
+          "name": "day4",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "day5": {
+          "name": "day5",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "day6": {
+          "name": "day6",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "day7": {
+          "name": "day7",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "day8": {
+          "name": "day8",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "day9": {
+          "name": "day9",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "day10": {
+          "name": "day10",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "day11": {
+          "name": "day11",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "day12": {
+          "name": "day12",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "day13": {
+          "name": "day13",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "day14": {
+          "name": "day14",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "day15": {
+          "name": "day15",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "day16": {
+          "name": "day16",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "day17": {
+          "name": "day17",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "day18": {
+          "name": "day18",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "day19": {
+          "name": "day19",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "day20": {
+          "name": "day20",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "day21": {
+          "name": "day21",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "day22": {
+          "name": "day22",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "day23": {
+          "name": "day23",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "day24": {
+          "name": "day24",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "day25": {
+          "name": "day25",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "day26": {
+          "name": "day26",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "day27": {
+          "name": "day27",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "day28": {
+          "name": "day28",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "day29": {
+          "name": "day29",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "day30": {
+          "name": "day30",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "day31": {
+          "name": "day31",
+          "type": "char(2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'AA'"
+        },
+        "notes": {
+          "name": "notes",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "staff_attendances_vendor_id_vendors_id_fk": {
+          "name": "staff_attendances_vendor_id_vendors_id_fk",
+          "tableFrom": "staff_attendances",
+          "tableTo": "vendors",
+          "columnsFrom": ["vendor_id"],
+          "columnsTo": ["id"],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        },
+        "staff_attendances_staff_id_staffs_id_fk": {
+          "name": "staff_attendances_staff_id_staffs_id_fk",
+          "tableFrom": "staff_attendances",
+          "tableTo": "staffs",
+          "columnsFrom": ["staff_id"],
+          "columnsTo": ["id"],
+          "onDelete": "restrict",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.vendors": {
+      "name": "vendors",
+      "schema": "",
+      "columns": {
+        "name": {
+          "name": "name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "address": {
+          "name": "address",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "service_area": {
+          "name": "service_area",
+          "type": "varchar(128)[]",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "is_active": {
+          "name": "is_active",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": true
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar(12)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "org_name": {
+          "name": "org_name",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "_id": {
+          "name": "_id",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "qr_code": {
+          "name": "qr_code",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "upi_id": {
+          "name": "upi_id",
+          "type": "varchar(56)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "logo_url": {
+          "name": "logo_url",
+          "type": "varchar(256)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "deleted_at": {
+          "name": "deleted_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "vendors_phone_unique": {
+          "name": "vendors_phone_unique",
+          "nullsNotDistinct": false,
+          "columns": ["phone"]
+        },
+        "vendors__id_unique": {
+          "name": "vendors__id_unique",
+          "nullsNotDistinct": false,
+          "columns": ["_id"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.contact_method": {
+      "name": "contact_method",
+      "schema": "public",
+      "values": ["sms", "whatsapp"]
+    },
+    "public.customer_status": {
+      "name": "customer_status",
+      "schema": "public",
+      "values": ["active", "inactive", "left"]
+    },
+    "public.error_severity": {
+      "name": "error_severity",
+      "schema": "public",
+      "values": ["low", "medium", "high", "critical"]
+    },
+    "public.notice_status": {
+      "name": "notice_status",
+      "schema": "public",
+      "values": ["delivered", "pending", "deleted"]
+    },
+    "public.payment_mode": {
+      "name": "payment_mode",
+      "schema": "public",
+      "values": ["cash", "online"]
+    },
+    "public.payment_status": {
+      "name": "payment_status",
+      "schema": "public",
+      "values": ["unpaid", "partial_paid", "paid", "advance"]
+    },
+    "public.plan_type": {
+      "name": "plan_type",
+      "schema": "public",
+      "values": ["random", "regular"]
+    },
+    "public.role": {
+      "name": "role",
+      "schema": "public",
+      "values": ["admin", "staff"]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

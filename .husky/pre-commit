@@ -1,0 +1,2 @@
+pnpm lint --fix
+pnpx pretty-quick --staged
