@@ -9,7 +9,7 @@ import env from "@/lib/env"
 
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    if (env.NEXT_PUBLIC_NODE_ENV === "development") return
+    if (env.NODE_ENV !== "production" && env.NEXT_PUBLIC_VERCEL_ENV !== "production") return
     posthog.init(env.NEXT_PUBLIC_POSTHOG_KEY, {
       api_host: env.NEXT_PUBLIC_POSTHOG_HOST,
       capture_pageview: false,
@@ -17,7 +17,7 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
     })
   }, [])
 
-  if (env.NEXT_PUBLIC_NODE_ENV === "development") return <>{children}</>
+  if (env.NODE_ENV !== "production" && env.NEXT_PUBLIC_VERCEL_ENV !== "production") return <>{children}</>
 
   return (
     <PHProvider client={posthog}>
