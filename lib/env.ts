@@ -28,12 +28,13 @@ const env = createEnv({
   shared: {
     PORT: z.string().min(1).optional(),
     NODE_ENV: z.string().min(1),
+    NEXT_PUBLIC_VERCEL_ENV: z.string().min(1),
   },
   experimental__runtimeEnv: {
     PORT: process.env.PORT,
     NODE_ENV: process.env.NODE_ENV,
     NEXT_PUBLIC_NODE_ENV: process.env.NODE_ENV,
-    NEXT_PUBLIC_VERCEL_ENV: process.env.VERCEL_ENV,
+    NEXT_PUBLIC_VERCEL_ENV: process.env.NEXT_PUBLIC_VERCEL_ENV,
     NEXT_PUBLIC_VAPID_PUBLIC_KEY: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
     NEXT_PUBLIC_SERVER_URL: process.env.NEXT_PUBLIC_SERVER_URL,
     NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
