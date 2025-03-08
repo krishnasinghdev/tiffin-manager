@@ -66,7 +66,7 @@ export const customerSchema = z.object({
     .string({ required_error: "Name is required" })
     .min(2, "Name must be 2+ characters")
     .max(40, "Name must be 40 characters or less"),
-  phone: z.string({ required_error: "Phone is required" }).length(10, "Phone must be exactly 10 digits"),
+  phone: z.coerce.string({ required_error: "Phone is required" }).length(10, "Phone must be exactly 10 digits"),
   address: z
     .string({ required_error: "Address is required" })
     .min(10, "Address must be 10+ characters")
@@ -92,7 +92,7 @@ export const SignUpSchema = z
     name: z.string({ required_error: "Name is required" }).min(2, "Name must be 2+ characters"),
     address: z.string({ required_error: "Address is required" }).min(10, "Address must be 10+ characters"),
     org_name: z.string({ required_error: "Organization name is required" }).min(2, "Organization name must be 2+ characters"),
-    phone: z.string({ required_error: "Phone is required" }).length(10, "Phone must be exactly 10 digits"),
+    phone: z.coerce.string({ required_error: "Phone is required" }).length(10, "Phone must be exactly 10 digits"),
     password: z.string({ required_error: "Password is required" }).min(6, "Password must be 6+ characters"),
     cpassword: z.string({ required_error: "Confirm password is required" }).min(6, "Confirm password must be 6+ characters"),
     service_area: z.array(z.string(), { required_error: "Service area is required" }).min(1, "At least one service area required"),
@@ -140,7 +140,7 @@ export const CreateStaffSchema = z.object({
   password: z
     .string({ required_error: "Password is required" })
     .refine((val) => val === "" || val.length >= 6, "Password must be 6+ characters if provided"),
-  phone: z.string({ required_error: "Phone is required" }).length(10, "Phone must be exactly 10 digits"),
+  phone: z.coerce.string({ required_error: "Phone is required" }).length(10, "Phone must be exactly 10 digits"),
   staff_id: z
     .string({ required_error: "Staff ID is required" })
     .min(6, "Staff ID must be 6-8 characters")
@@ -257,7 +257,7 @@ export const EditVendorSchema = z.object({
     .string({ required_error: "Organization name is required" })
     .min(2, "Org name must be 2+ characters")
     .max(40, "Org name must be 40 characters or less"),
-  phone: z.string({ required_error: "Phone is required" }).length(10, "Phone must be exactly 10 digits"),
+  phone: z.coerce.string({ required_error: "Phone is required" }).length(10, "Phone must be exactly 10 digits"),
   address: z
     .string({ required_error: "Address is required" })
     .min(10, "Address must be 10+ characters")
