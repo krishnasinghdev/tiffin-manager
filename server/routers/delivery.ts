@@ -38,21 +38,21 @@ export const deliveryRouter = createTRPCRouter({
           dinner: sql<string>`COALESCE(SUBSTRING(COALESCE(${delivery}.${sql.raw(dayColumn)}, 'AAA'), 3, 1), '')`,
           addon_amount: sql<string>`
         COALESCE(
-          (SELECT jsonb_agg(e->'amount') FROM
+          (SELECT jsonb_agg(e->'amount')::text FROM
           jsonb_array_elements(${delivery}.add_ons) e
            WHERE (e->>'day')::int = ${dayNum}
           ),
-          ''::jsonb
-        )::text
+          ''
+        )
         `,
           addon_detail: sql<string>`
         COALESCE(
-          (SELECT jsonb_agg(e->'detail') FROM
+          (SELECT jsonb_agg(e->'detail')::text FROM
           jsonb_array_elements(${delivery}.add_ons) e
            WHERE (e->>'day')::int = ${dayNum}
           ),
-          ''::jsonb
-        )::text
+          ''
+        )
         `,
         })
         .from(customer)
