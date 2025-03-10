@@ -35,7 +35,7 @@ import {
 } from "@payloadcms/richtext-lexical/rsc"
 import { UploadthingClientUploadHandler as UploadthingClientUploadHandler_749dcaa11bb61b873d113cb6c609bc10 } from "@payloadcms/storage-uploadthing/client"
 
-import { SlugComponent as SlugComponent_2f7cb6d15a7be4cbd9d669ac9f96d997 } from "@/payload/fields/slug/SlugComponent"
+import { SlugComponent as SlugComponent_2f7cb6d15a7be4cbd9d669ac9f96d997 } from "@/payload/fields/slug/slug-component"
 import { default as default_775bbb7a8e856b5f5a45e75dd57ef5b5 } from "@/payload/global/footer/row-label"
 import { default as default_275a5f15e3a54a07f3973e83a2ae95d1 } from "@/payload/global/header/row-label"
 

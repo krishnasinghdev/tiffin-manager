@@ -9,7 +9,7 @@ import { uploadthingStorage } from "@payloadcms/storage-uploadthing"
 import { Plugin } from "payload"
 
 import { Page, Post } from "@/types/payload-types"
-import { revalidateRedirects } from "@/payload/hooks/revalidateRedirects"
+import { revalidateRedirects } from "@/payload/hooks/revalidate-redirects"
 import { getServerSideURL } from "@/payload/payload-helpers"
 import { beforeSyncWithSearch } from "@/payload/search/before-sync"
 import { searchFields } from "@/payload/search/field-overrides"

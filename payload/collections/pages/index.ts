@@ -9,7 +9,7 @@ import { LocationGroup } from "@/payload/blocks/location-group/config"
 import { MediaBlock } from "@/payload/blocks/MediaBlock/config"
 import { slugField } from "@/payload/fields/slug"
 import { hero } from "@/payload/global/heros/config"
-import { populatePublishedAt } from "@/payload/hooks/populatePublishedAt"
+import { populatePublishedAt } from "@/payload/hooks/populate-publishedat"
 import { generatePreviewPath } from "@/payload/payload-helpers"
 
 import { authenticated } from "../access/authenticated"

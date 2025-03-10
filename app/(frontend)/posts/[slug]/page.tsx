@@ -3,7 +3,7 @@ import type { Metadata } from "next"
 import { draftMode } from "next/headers"
 import { getPayload } from "payload"
 
-import { RelatedPosts } from "@/payload/blocks/RelatedPosts/Component"
+import { RelatedPosts } from "@/payload/blocks/related-posts"
 import { LivePreviewListener } from "@/payload/components/live-preview-listener"
 import { PayloadRedirects } from "@/payload/components/payload-redirects"
 import RichText from "@/payload/components/richtext"
