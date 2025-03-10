@@ -18,29 +18,29 @@ export const Media: CollectionConfig = {
       required: true,
     },
   ],
-  upload: {
-    adminThumbnail: "thumbnail",
-    focalPoint: true,
-    imageSizes: [
-      {
-        name: "square",
-        width: 500,
-        height: 500,
-      },
-      {
-        name: "medium",
-        width: 900,
-      },
-      {
-        name: "large",
-        width: 1400,
-      },
-      {
-        name: "og",
-        width: 1200,
-        height: 630,
-        crop: "center",
-      },
-    ],
-  },
+  // upload: {
+  //   adminThumbnail: "thumbnail",
+  //   focalPoint: true,
+  //   imageSizes: [
+  //     {
+  //       name: "square",
+  //       width: 500,
+  //       height: 500,
+  //     },
+  //     {
+  //       name: "medium",
+  //       width: 900,
+  //     },
+  //     {
+  //       name: "large",
+  //       width: 1400,
+  //     },
+  //     {
+  //       name: "og",
+  //       width: 1200,
+  //       height: 630,
+  //       crop: "center",
+  //     },
+  //   ],
+  // },
 }

@@ -27,6 +27,7 @@ import {
   ListOrdered,
   Loader,
   LogOut,
+  MapPin,
   Moon,
   MoreHorizontal,
   PanelLeftOpen,
@@ -56,6 +57,7 @@ export type IconOptions = keyof typeof Icons
 const Icons = {
   AlertTriangle,
   ArrowLeft,
+  MapPin,
   Cancel,
   ArrowRight,
   BadgeCheck,

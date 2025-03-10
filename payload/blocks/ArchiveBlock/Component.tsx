@@ -1,4 +1,5 @@
 import React from "react"
+import Link from "next/link"
 import { getPayload } from "payload"
 
 import type { ArchiveBlock as ArchiveBlockProps, Post } from "@/types/payload-types"
@@ -13,11 +14,12 @@ export const ArchiveBlock: React.FC<
 > = async (props) => {
   const { id, categories, introContent, limit: limitFromProps, populateBy, selectedDocs } = props
 
+  let posts: Post[] = []
+  let relationTo: string = "vendors"
   const limit = limitFromProps || 3
 
-  let posts: Post[] = []
-
   if (populateBy === "collection") {
+    relationTo = "posts"
     const payload = await getPayload({ config: configPromise })
 
     const flattenedCategories = categories?.map((category) => {
@@ -56,9 +58,12 @@ export const ArchiveBlock: React.FC<
       {introContent && (
         <div className="container mb-16">
           <RichText className="ms-0 max-w-[48rem]" data={introContent} enableGutter={false} />
+          <Link href={`/${relationTo}`} className="text-primary-foreground">
+            View all
+          </Link>
         </div>
       )}
-      <CollectionArchive posts={posts} />
+      <CollectionArchive posts={posts} relationTo={relationTo} />
     </div>
   )
 }

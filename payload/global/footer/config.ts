@@ -1,8 +1,8 @@
 import type { GlobalConfig } from "payload"
 
-import { link } from "@/payload/fields/link"
+import { linkGroup } from "@/payload/fields/linkGroup"
 
-import { revalidateFooter } from "./hooks/revalidateFooter"
+import { revalidateFooter } from "./revalidate-hook"
 
 export const Footer: GlobalConfig = {
   slug: "footer",
@@ -14,15 +14,23 @@ export const Footer: GlobalConfig = {
       name: "navItems",
       type: "array",
       fields: [
-        link({
+        {
+          name: "title",
+          type: "text",
+          required: true,
+        },
+        linkGroup({
           appearances: false,
+          overrides: {
+            maxRows: 4,
+          },
         }),
       ],
       maxRows: 6,
       admin: {
         initCollapsed: true,
         components: {
-          RowLabel: "@/payload/global/footer/RowLabel",
+          RowLabel: "@/payload/global/footer/row-label",
         },
       },
     },

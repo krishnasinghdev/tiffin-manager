@@ -203,7 +203,6 @@ export default function CustomerDeliveryPage() {
           size="sm"
           variant={row.original.addon_amount ? "outline" : "secondary"}
           onClick={() => {
-            console.log(row.original)
             setOpenDialog(true)
             if (row.original.addon_amount) {
               form.setValue("addon_amount", row.original.addon_amount)

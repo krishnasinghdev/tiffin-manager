@@ -4,7 +4,7 @@ import { redirectsPlugin } from "@payloadcms/plugin-redirects"
 import { searchPlugin } from "@payloadcms/plugin-search"
 import { seoPlugin } from "@payloadcms/plugin-seo"
 import { GenerateTitle, GenerateURL } from "@payloadcms/plugin-seo/types"
-import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from "@payloadcms/richtext-lexical"
+import { FixedToolbarFeature, lexicalEditor } from "@payloadcms/richtext-lexical"
 import { uploadthingStorage } from "@payloadcms/storage-uploadthing"
 import { Plugin } from "payload"
 
@@ -67,9 +67,7 @@ export const plugins: Plugin[] = [
             return {
               ...field,
               editor: lexicalEditor({
-                features: ({ rootFeatures }) => {
-                  return [...rootFeatures, FixedToolbarFeature(), HeadingFeature({ enabledHeadingSizes: ["h1", "h2", "h3", "h4"] })]
-                },
+                features: ({ rootFeatures }) => [...rootFeatures, FixedToolbarFeature()],
               }),
             }
           }

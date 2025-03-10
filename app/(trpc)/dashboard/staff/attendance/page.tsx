@@ -19,10 +19,10 @@ type AttendanceStatus = "P" | "A" | "L"
 interface StaffAttendanceRecord {
   staff_id: number
   staff_name: string
-  staff_role: string
+  staff_role: "staff" | "delivery" | "kitchen" | "manager"
   morning: string
   evening: string
-  id?: number
+  id: number | null
 }
 
 interface StaffAttendanceResponse {
@@ -150,21 +150,19 @@ export default function StaffAttendancePage() {
 
     if (!isSingleStaff && DailyAttendance) {
       if (type === "change" && options.id && options.shift && options.value) {
-        const updatedData: StaffAttendanceResponse = {
+        const updatedData = {
           ...DailyAttendance,
           data: DailyAttendance.data.map((staff) =>
             staff.staff_id === options.id ? { ...staff, [options.shift as string]: options.value } : staff
           ),
         }
-        // @ts-ignore - TS doesn't like this but it works
-        utils.staffattendance.getDailyAttendance.setData({ date: formattedDate }, updatedData)
+        utils.staffattendance.getDailyAttendance.setData({ date: currentDate.format(DATE_FORMAT) }, updatedData)
       } else if (type === "markAll") {
-        const updatedData: StaffAttendanceResponse = {
+        const updatedData = {
           ...DailyAttendance,
           data: DailyAttendance.data.map((staff) => ({ ...staff, morning: "P", evening: "P" })),
         }
-        // @ts-ignore - TS doesn't like this but it works
-        utils.staffattendance.getDailyAttendance.setData({ date: formattedDate }, updatedData)
+        utils.staffattendance.getDailyAttendance.setData({ date: currentDate.format(DATE_FORMAT) }, updatedData)
       }
     }
   }

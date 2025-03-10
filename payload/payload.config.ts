@@ -3,15 +3,18 @@ import { resendAdapter } from "@payloadcms/email-resend"
 import { buildConfig, PayloadRequest } from "payload"
 import sharp from "sharp"
 
-import { defaultLexical } from "@/payload/fields/defaultLexical"
+import { defaultLexical } from "@/payload/fields/default-lexical"
 import { getServerSideURL } from "@/payload/payload-helpers"
 import env from "@/lib/env"
 
 import { Categories } from "./collections/categories"
+import { Locations } from "./collections/locations"
 import { Media } from "./collections/media"
 import { Pages } from "./collections/pages"
+import { Plans } from "./collections/plans"
 import { Posts } from "./collections/posts"
 import { Users } from "./collections/users"
+import { Vendors } from "./collections/vendor"
 import { Footer } from "./global/footer/config"
 import { Header } from "./global/header/config"
 import { plugins } from "./plugins"
@@ -54,7 +57,7 @@ export default buildConfig({
   db: mongooseAdapter({
     url: env.MONGODB_URL,
   }),
-  collections: [Pages, Posts, Media, Categories, Users],
+  collections: [Pages, Posts, Media, Categories, Users, Locations, Vendors, Plans],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins: [...plugins],

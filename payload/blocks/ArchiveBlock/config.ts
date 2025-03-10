@@ -1,4 +1,4 @@
-import { FixedToolbarFeature, HeadingFeature, InlineToolbarFeature, lexicalEditor } from "@payloadcms/richtext-lexical"
+import { FixedToolbarFeature, lexicalEditor } from "@payloadcms/richtext-lexical"
 import type { Block } from "payload"
 
 export const Archive: Block = {
@@ -9,14 +9,7 @@ export const Archive: Block = {
       name: "introContent",
       type: "richText",
       editor: lexicalEditor({
-        features: ({ rootFeatures }) => {
-          return [
-            ...rootFeatures,
-            HeadingFeature({ enabledHeadingSizes: ["h1", "h2", "h3", "h4"] }),
-            FixedToolbarFeature(),
-            InlineToolbarFeature(),
-          ]
-        },
+        features: ({ rootFeatures }) => [...rootFeatures, FixedToolbarFeature()],
       }),
       label: "Intro Content",
     },
@@ -78,7 +71,7 @@ export const Archive: Block = {
       },
       hasMany: true,
       label: "Selection",
-      relationTo: ["posts"],
+      relationTo: ["posts", "vendors"],
     },
   ],
   labels: {

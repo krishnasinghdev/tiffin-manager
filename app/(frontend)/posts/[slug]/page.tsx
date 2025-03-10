@@ -7,11 +7,9 @@ import { RelatedPosts } from "@/payload/blocks/RelatedPosts/Component"
 import { LivePreviewListener } from "@/payload/components/live-preview-listener"
 import { PayloadRedirects } from "@/payload/components/payload-redirects"
 import RichText from "@/payload/components/richtext"
-import { PostHero } from "@/payload/global/heros/PostHero"
+import { PostHero } from "@/payload/global/heros/post-hero"
 import { generateMeta } from "@/payload/payload-helpers"
 import configPromise from "@/payload/payload.config"
-
-import PageClient from "./page.client"
 
 export async function generateStaticParams() {
   const payload = await getPayload({ config: configPromise })
@@ -49,8 +47,6 @@ export default async function Post({ params: paramsPromise }: Args) {
 
   return (
     <article className="pt-16 pb-16">
-      <PageClient />
-
       {/* Allows redirects for valid pages too */}
       <PayloadRedirects disableNotFound url={url} />
 

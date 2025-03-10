@@ -58,11 +58,11 @@ type UpdatedDelivery = Record<MealType, string>
 
 // Utility Components
 const DeliveryRadioGroup = ({ value, onChange, idPrefix }: { value: string; onChange: (value: string) => void; idPrefix: string }) => (
-  <RadioGroup value={value} onValueChange={onChange} className="flex space-x-2">
+  <RadioGroup value={value} onValueChange={onChange} className="flex space-x-1">
     {["P", "A", "H"].map((status) => (
-      <div key={status} className="flex items-center space-x-1">
-        <RadioGroupItem value={status} id={`${idPrefix}-${status}`} />
+      <div key={status} className="flex items-center space-x-2">
         <Label htmlFor={`${idPrefix}-${status}`}>{status}</Label>
+        <RadioGroupItem value={status} id={`${idPrefix}-${status}`} />
       </div>
     ))}
   </RadioGroup>
@@ -171,9 +171,9 @@ export default function DeliveryPage() {
     {
       size: 36,
       header: () => (
-        <div className="flex items-center whitespace-nowrap">
+        <div className="my-1 flex max-w-30 flex-col items-start whitespace-nowrap">
+          <div className="mb-2 self-center">Lunch</div>
           <DeliveryRadioGroup value={allMeals.lunch} onChange={(value) => updateAllMeals("lunch", value)} idPrefix="all-lunch" />
-          <span className="ml-2">Lunch</span>
         </div>
       ),
       accessorKey: "lunch",
@@ -189,9 +189,9 @@ export default function DeliveryPage() {
     {
       size: 36,
       header: () => (
-        <div className="flex items-center whitespace-nowrap">
+        <div className="my-1 flex max-w-30 flex-col items-start whitespace-nowrap">
+          <div className="mb-2 self-center">Dinner</div>
           <DeliveryRadioGroup value={allMeals.dinner} onChange={(value) => updateAllMeals("dinner", value)} idPrefix="all-dinner" />
-          <span className="ml-2">Dinner</span>
         </div>
       ),
       accessorKey: "dinner",
@@ -555,6 +555,10 @@ export default function DeliveryPage() {
           </Pagination>
         </div>
       </div>
+
+      <footer className="text-muted-foreground text-sm">
+        <p>P = Present, A = Absent, H = Holiday</p>
+      </footer>
     </div>
   )
 }

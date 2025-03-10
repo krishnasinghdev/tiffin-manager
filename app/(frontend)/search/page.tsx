@@ -6,8 +6,6 @@ import { CollectionArchive } from "@/payload/components/collection-archive"
 import configPromise from "@/payload/payload.config"
 import { Search } from "@/payload/search/Component"
 
-import PageClient from "./page.client"
-
 type Args = {
   searchParams: Promise<{
     q: string
@@ -61,7 +59,6 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
 
   return (
     <div className="pt-24 pb-24">
-      <PageClient />
       <div className="container mb-16">
         <div className="prose dark:prose-invert max-w-none text-center">
           <h1 className="mb-8 lg:mb-16">Search</h1>
@@ -73,7 +70,7 @@ export default async function Page({ searchParams: searchParamsPromise }: Args) 
       </div>
 
       {posts.totalDocs > 0 ? (
-        <CollectionArchive posts={posts.docs as CardPostData[]} />
+        <CollectionArchive posts={posts.docs as CardPostData[]} relationTo="posts" />
       ) : (
         <div className="container">No results found.</div>
       )}

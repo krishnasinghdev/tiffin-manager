@@ -317,7 +317,7 @@ function BillForm({ billData, billType, onSubmit }: BillFormProps) {
     form.setValue("total_amount", String(total))
     form.setValue("items", currentItems)
   }
-  console.log(form.formState.errors)
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

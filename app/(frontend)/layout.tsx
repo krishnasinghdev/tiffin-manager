@@ -2,20 +2,15 @@ import "./globals.css"
 
 import React from "react"
 import type { Metadata } from "next"
-import { draftMode } from "next/headers"
 import Script from "next/script"
 
-import { AdminBar } from "@/payload/components/AdminBar"
-import { Footer } from "@/payload/global/footer/Component"
-import { Header } from "@/payload/global/header/Component"
+import { Footer } from "@/payload/global/footer/footer"
+import { Header } from "@/payload/global/header/header"
 import { getServerSideURL, mergeOpenGraph } from "@/payload/payload-helpers"
-import { HeaderThemeProvider } from "@/payload/providers/header-theme"
 import { ThemeProvider } from "@/payload/providers/theme"
 import { defaultTheme, themeLocalStorageKey } from "@/payload/providers/theme-types"
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const { isEnabled } = await draftMode()
-
   return (
     <>
       <Script
@@ -59,16 +54,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         strategy="beforeInteractive"
       />
       <ThemeProvider>
-        <HeaderThemeProvider>
-          <AdminBar
-            adminBarProps={{
-              preview: isEnabled,
-            }}
-          />
-          <Header />
-          {children}
-          <Footer />
-        </HeaderThemeProvider>
+        <Header />
+        {children}
+        <Footer />
       </ThemeProvider>
     </>
   )
@@ -77,8 +65,4 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 export const metadata: Metadata = {
   metadataBase: new URL(getServerSideURL()),
   openGraph: mergeOpenGraph(),
-  twitter: {
-    card: "summary_large_image",
-    creator: "@payloadcms",
-  },
 }
