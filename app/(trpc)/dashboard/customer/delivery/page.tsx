@@ -22,12 +22,12 @@ import { AddonSchema, type AddonSchemaType } from "@/types/zod"
 import Icons from "@/lib/icons"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Form } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Pagination, PaginationContent, PaginationItem } from "@/components/ui/pagination"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableAlert, TableBody, TableCell, TableHead, TableHeader, TableRow, TableSkeleton } from "@/components/ui/table"
 import CustomField from "@/components/custom-field"
@@ -41,31 +41,34 @@ const parseAsDate = createParser({
   eq: (a, b) => dayjs(a).isSame(dayjs(b), "day"),
 })
 
-type DeliveryStatus = "P" | "A" | "H"
 type MealType = "breakfast" | "lunch" | "dinner"
 type DeliveryRecord = {
   customer_id: number
   name: string
   address: string
   id: number | null
-  breakfast: string
-  lunch: string
-  dinner: string
+  breakfast: boolean
+  lunch: boolean
+  dinner: boolean
   addon_amount: string | null
   addon_detail: string | null
 }
-type UpdatedDelivery = Record<MealType, string>
+type UpdatedDelivery = Record<MealType, boolean>
 
 // Utility Components
-const DeliveryRadioGroup = ({ value, onChange, idPrefix }: { value: string; onChange: (value: string) => void; idPrefix: string }) => (
-  <RadioGroup value={value} onValueChange={onChange} className="flex space-x-1">
-    {["P", "A", "H"].map((status) => (
-      <div key={status} className="flex items-center space-x-2">
-        <Label htmlFor={`${idPrefix}-${status}`}>{status}</Label>
-        <RadioGroupItem value={status} id={`${idPrefix}-${status}`} />
-      </div>
-    ))}
-  </RadioGroup>
+const DeliveryCheckbox = ({
+  checked,
+  onChange,
+  idPrefix,
+}: {
+  checked: boolean
+  onChange: (checked: boolean) => void
+  idPrefix: string
+}) => (
+  <div className="flex items-center space-x-2">
+    <Checkbox id={idPrefix} checked={checked} onCheckedChange={onChange} />
+    <Label htmlFor={idPrefix}>Present</Label>
+  </div>
 )
 
 // Main Component
@@ -78,7 +81,11 @@ export default function DeliveryPage() {
   const [cId, setCId] = useQueryState("id", parseAsInteger.withDefault(0))
   const [cName, setCName] = useQueryState("name", parseAsString.withDefault(""))
   const [updatedData, setUpdatedData] = useState<Map<number, UpdatedDelivery>>(new Map())
-  const [allMeals, setAllMeals] = useState<Record<MealType, string>>({ breakfast: "A", lunch: "A", dinner: "A" })
+  const [allMeals, setAllMeals] = useState<Record<MealType, boolean>>({
+    breakfast: false,
+    lunch: false,
+    dinner: false,
+  })
   const [tableState, setTableState] = useState<{
     globalFilter: string
     columnFilters: ColumnFiltersState
@@ -106,27 +113,27 @@ export default function DeliveryPage() {
   })
 
   // Handlers
-  const updateMeal = (customerId: number, field: MealType, value: string) => {
+  const updateMeal = (customerId: number, field: MealType, value: boolean) => {
     setUpdatedData((prev) => {
       const newMap = new Map(prev)
       const original = deliveriesResponse?.data.find((item) => item.customer_id === customerId)
       const current = newMap.get(customerId) || {
-        breakfast: original?.breakfast || "A",
-        lunch: original?.lunch || "A",
-        dinner: original?.dinner || "A",
+        breakfast: original?.breakfast ?? false,
+        lunch: original?.lunch ?? false,
+        dinner: original?.dinner ?? false,
       }
       newMap.set(customerId, { ...current, [field]: value })
       return newMap
     })
   }
 
-  const updateAllMeals = (meal: MealType, value: string) => {
+  const updateAllMeals = (meal: MealType, value: boolean) => {
     setAllMeals((prev) => ({ ...prev, [meal]: value }))
     deliveriesResponse?.data.forEach((item) => updateMeal(item.customer_id, meal, value))
   }
 
-  const getMealValue = (customerId: number, field: MealType): string =>
-    updatedData.get(customerId)?.[field] ?? deliveriesResponse?.data.find((item) => item.customer_id === customerId)?.[field] ?? "A"
+  const getMealValue = (customerId: number, field: MealType): boolean =>
+    updatedData.get(customerId)?.[field] ?? deliveriesResponse?.data.find((item) => item.customer_id === customerId)?.[field] ?? false
 
   // Table Configuration
   const columns: ColumnDef<DeliveryRecord>[] = [
@@ -146,41 +153,19 @@ export default function DeliveryPage() {
       cell: ({ row }) => <div className="min-w-[120px]">{row.getValue("address")}</div>,
       enableSorting: false,
     },
-    // {
-    //   size: 36,
-    //   header: () => (
-    //     <div className="flex items-center whitespace-nowrap">
-    //       <DeliveryRadioGroup
-    //         value={allMeals.breakfast}
-    //         onChange={(value) => updateAllMeals("breakfast", value)}
-    //         idPrefix="all-breakfast"
-    //       />
-    //       <span className="ml-2">Breakfast</span>
-    //     </div>
-    //   ),
-    //   accessorKey: "breakfast",
-    //   cell: ({ row }) => (
-    //     <DeliveryRadioGroup
-    //       value={getMealValue(row.original.customer_id, "breakfast")}
-    //       onChange={(value) => updateMeal(row.original.customer_id, "breakfast", value)}
-    //       idPrefix={`breakfast-${row.original.customer_id}`}
-    //     />
-    //   ),
-    //   enableSorting: false,
-    // },
     {
       size: 36,
       header: () => (
         <div className="my-1 flex max-w-30 flex-col items-start whitespace-nowrap">
           <div className="mb-2 self-center">Lunch</div>
-          <DeliveryRadioGroup value={allMeals.lunch} onChange={(value) => updateAllMeals("lunch", value)} idPrefix="all-lunch" />
+          <DeliveryCheckbox checked={allMeals.lunch} onChange={(checked) => updateAllMeals("lunch", checked)} idPrefix="all-lunch" />
         </div>
       ),
       accessorKey: "lunch",
       cell: ({ row }) => (
-        <DeliveryRadioGroup
-          value={getMealValue(row.original.customer_id, "lunch")}
-          onChange={(value) => updateMeal(row.original.customer_id, "lunch", value)}
+        <DeliveryCheckbox
+          checked={getMealValue(row.original.customer_id, "lunch")}
+          onChange={(checked) => updateMeal(row.original.customer_id, "lunch", checked)}
           idPrefix={`lunch-${row.original.customer_id}`}
         />
       ),
@@ -191,14 +176,18 @@ export default function DeliveryPage() {
       header: () => (
         <div className="my-1 flex max-w-30 flex-col items-start whitespace-nowrap">
           <div className="mb-2 self-center">Dinner</div>
-          <DeliveryRadioGroup value={allMeals.dinner} onChange={(value) => updateAllMeals("dinner", value)} idPrefix="all-dinner" />
+          <DeliveryCheckbox
+            checked={allMeals.dinner}
+            onChange={(checked) => updateAllMeals("dinner", checked)}
+            idPrefix="all-dinner"
+          />
         </div>
       ),
       accessorKey: "dinner",
       cell: ({ row }) => (
-        <DeliveryRadioGroup
-          value={getMealValue(row.original.customer_id, "dinner")}
-          onChange={(value) => updateMeal(row.original.customer_id, "dinner", value)}
+        <DeliveryCheckbox
+          checked={getMealValue(row.original.customer_id, "dinner")}
+          onChange={(checked) => updateMeal(row.original.customer_id, "dinner", checked)}
           idPrefix={`dinner-${row.original.customer_id}`}
         />
       ),
@@ -274,9 +263,9 @@ export default function DeliveryPage() {
     try {
       const updatedDeliveries = Array.from(updatedData.entries()).map(([customerId, data]) => ({
         customer_id: customerId,
-        lunch: data.lunch as DeliveryStatus,
-        dinner: data.dinner as DeliveryStatus,
-        breakfast: data.breakfast as DeliveryStatus,
+        breakfast: data.breakfast ? "P" : "A",
+        lunch: data.lunch ? "P" : "A",
+        dinner: data.dinner ? "P" : "A",
       }))
 
       const { success, message } = await updateDelivery.mutateAsync({

@@ -24,11 +24,11 @@ import Icons from "@/lib/icons"
 import { PDFGenerator, type jsPDFExtra } from "@/lib/pdf-generator"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Form } from "@/components/ui/form"
 import { Label } from "@/components/ui/label"
 import { Pagination, PaginationContent, PaginationItem } from "@/components/ui/pagination"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Table, TableAlert, TableBody, TableCell, TableHead, TableHeader, TableRow, TableSkeleton } from "@/components/ui/table"
 import CustomField from "@/components/custom-field"
 import { clientApi } from "@/components/trpc-provider"
@@ -48,37 +48,41 @@ const parseAsDate = createParser({
 })
 
 type MealType = "breakfast" | "lunch" | "dinner"
-type DeliveryStatus = "P" | "A" | "H"
 
+// New type for attendance
 type attendanceType = {
   date: string
   delivery_id: number
   customer_id: number
   addon_detail: string | null
-  lunch: DeliveryStatus | string
-  dinner: DeliveryStatus | string
-  breakfast: DeliveryStatus | string
+  lunch: boolean
+  dinner: boolean
+  breakfast: boolean
   addon_amount: string
 }
 
 type UpdateDeliveryType = {
   date: string
-  lunch: string
-  dinner: string
-  breakfast: string
+  lunch: boolean
+  dinner: boolean
+  breakfast: boolean
   customer_id: number
 }
 
-// Utility Component for handling meal status
-const MealRadioGroup = ({ value, onChange, idPrefix }: { value: string; onChange: (value: string) => void; idPrefix: string }) => (
-  <RadioGroup value={value} onValueChange={onChange} className="flex space-x-2">
-    {["P", "A", "H"].map((status) => (
-      <div key={status} className="flex items-center space-x-1">
-        <RadioGroupItem value={status} id={`${idPrefix}-${status}`} />
-        <Label htmlFor={`${idPrefix}-${status}`}>{status}</Label>
-      </div>
-    ))}
-  </RadioGroup>
+// Replace MealRadioGroup with MealCheckbox
+const MealCheckbox = ({
+  checked,
+  onChange,
+  idPrefix,
+}: {
+  checked: boolean
+  onChange: (checked: boolean) => void
+  idPrefix: string
+}) => (
+  <div className="flex items-center space-x-2">
+    <Checkbox id={idPrefix} checked={checked} onCheckedChange={onChange} />
+    <Label htmlFor={idPrefix}>Present</Label>
+  </div>
 )
 
 export default function CustomerDeliveryPage() {
@@ -90,7 +94,11 @@ export default function CustomerDeliveryPage() {
   const [openDialog, setOpenDialog] = useQueryState("dialog", parseAsBoolean.withDefault(false))
 
   const [updatedData, setUpdatedData] = useState<Map<string, UpdateDeliveryType>>(new Map())
-  const [allMeals, setAllMeals] = useState<Record<MealType, string>>({ breakfast: "A", lunch: "A", dinner: "A" })
+  const [allMeals, setAllMeals] = useState<Record<MealType, boolean>>({
+    breakfast: false,
+    lunch: false,
+    dinner: false,
+  })
 
   const [globalFilter, setGlobalFilter] = useState("")
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
@@ -108,14 +116,14 @@ export default function CustomerDeliveryPage() {
   })
 
   // Update handlers for delivery status
-  const handleMealChange = (date: string, field: MealType, value: string) => {
+  const handleMealChange = (date: string, field: MealType, value: boolean) => {
     setUpdatedData((prev) => {
       const newMap = new Map(prev)
       const originalItem = deliveriesResponse?.data?.deliveries.find((item) => item.date === date)
       const currentUpdate = newMap.get(date) || {
-        lunch: originalItem?.lunch || "A",
-        dinner: originalItem?.dinner || "A",
-        breakfast: originalItem?.breakfast || "A",
+        lunch: originalItem?.lunch ?? false,
+        dinner: originalItem?.dinner ?? false,
+        breakfast: originalItem?.breakfast ?? false,
         date,
         customer_id: Number(params.id),
       }
@@ -125,22 +133,20 @@ export default function CustomerDeliveryPage() {
     })
   }
 
-  const handleAllMealChange = (meal: MealType, value: string) => {
+  const handleAllMealChange = (meal: MealType, value: boolean) => {
     setAllMeals((prev) => ({ ...prev, [meal]: value }))
     deliveriesResponse?.data?.deliveries.forEach((item) => {
       handleMealChange(item.date, meal, value)
     })
   }
 
-  const getMealStatus = (date: string, field: MealType): string => {
+  const getMealStatus = (date: string, field: MealType): boolean => {
     const updatedValue = updatedData.get(date)?.[field]
-
     if (updatedValue !== undefined) {
       return updatedValue
     }
-
     const originalItem = deliveriesResponse?.data?.deliveries.find((item) => item.date === date)
-    return originalItem ? (originalItem[field] as string) : "A"
+    return originalItem ? originalItem[field] : false
   }
 
   const columns: ColumnDef<attendanceType>[] = [
@@ -154,19 +160,15 @@ export default function CustomerDeliveryPage() {
       size: 28,
       header: () => (
         <div className="flex items-center gap-2 whitespace-nowrap">
-          <MealRadioGroup
-            value={allMeals.lunch}
-            onChange={(value) => handleAllMealChange("lunch", value as string)}
-            idPrefix="all-lunch"
-          />
-          <p> Lunch</p>
+          <MealCheckbox checked={allMeals.lunch} onChange={(checked) => handleAllMealChange("lunch", checked)} idPrefix="all-lunch" />
+          <p>Lunch</p>
         </div>
       ),
       accessorKey: "lunch",
       cell: ({ row }) => (
-        <MealRadioGroup
-          value={getMealStatus(row.getValue("date"), "lunch")}
-          onChange={(value) => handleMealChange(row.getValue("date"), "lunch", value as string)}
+        <MealCheckbox
+          checked={getMealStatus(row.getValue("date"), "lunch")}
+          onChange={(checked) => handleMealChange(row.getValue("date"), "lunch", checked)}
           idPrefix={`lunch-${row.getValue("date")}`}
         />
       ),
@@ -176,19 +178,19 @@ export default function CustomerDeliveryPage() {
       size: 28,
       header: () => (
         <div className="flex items-center gap-2 whitespace-nowrap">
-          <MealRadioGroup
-            value={allMeals.dinner}
-            onChange={(value) => handleAllMealChange("dinner", value as string)}
+          <MealCheckbox
+            checked={allMeals.dinner}
+            onChange={(checked) => handleAllMealChange("dinner", checked)}
             idPrefix="all-dinner"
           />
-          <p> Dinner</p>
+          <p>Dinner</p>
         </div>
       ),
       accessorKey: "dinner",
       cell: ({ row }) => (
-        <MealRadioGroup
-          value={getMealStatus(row.getValue("date"), "dinner")}
-          onChange={(value) => handleMealChange(row.getValue("date"), "dinner", value as string)}
+        <MealCheckbox
+          checked={getMealStatus(row.getValue("date"), "dinner")}
+          onChange={(checked) => handleMealChange(row.getValue("date"), "dinner", checked)}
           idPrefix={`dinner-${row.getValue("date")}`}
         />
       ),
@@ -265,19 +267,24 @@ export default function CustomerDeliveryPage() {
         const day = dayjs(date).date()
         const dayField = `day${day}`
 
-        updatedObj[dayField] = `${data.breakfast}${data.lunch}${data.dinner}`
+        // Convert boolean to P/A string
+        const breakfast = data.breakfast ? "P" : "A"
+        const lunch = data.lunch ? "P" : "A"
+        const dinner = data.dinner ? "P" : "A"
+
+        updatedObj[dayField] = `${breakfast}${lunch}${dinner}`
       })
 
       const { success, message } = await updateDelivery.mutateAsync({
-        day: currentMonth.date(),
         month_year: currentMonth.format("YYYY-MM"),
         customer_id: Number(params.id),
+        day: dayjs().date(),
         records: updatedObj,
       })
 
       if (success) {
         await utils.delivery.getCustomerMonthDeliveries.invalidate({
-          month: currentMonth.format("YYYY-MM"),
+          month: currentMonth.format("MM-YYYY"),
         })
         toast.success(message)
         setUpdatedData(new Map())

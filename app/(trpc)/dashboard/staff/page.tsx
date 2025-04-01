@@ -14,8 +14,8 @@ import Icons from "@/lib/icons"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Form, FormControl, FormLabel } from "@/components/ui/form"
-import { RadioGroupItem } from "@/components/ui/radio-group"
+import { Form } from "@/components/ui/form"
+import { SelectItem } from "@/components/ui/select"
 import { Table, TableAlert, TableBody, TableCell, TableHead, TableHeader, TableRow, TableSkeleton } from "@/components/ui/table"
 import CustomField from "@/components/custom-field"
 import { clientApi } from "@/components/trpc-provider"
@@ -102,7 +102,7 @@ export default function StaffPage() {
                 </div>
                 <CustomField type="password" control={form.control} name="password" label="Password" />
                 <div className="flex gap-4">
-                  <CustomField type="radio" control={form.control} name="staff_role" label="Staff Role">
+                  {/* <CustomField type="radio" control={form.control} name="staff_role" label="Staff Role">
                     {staffRoleOptions.map((option) => (
                       <div className="flex items-center space-y-0 space-x-3" key={option.value}>
                         <FormControl>
@@ -110,6 +110,20 @@ export default function StaffPage() {
                         </FormControl>
                         <FormLabel className="font-normal">{option.value}</FormLabel>
                       </div>
+                    ))}
+                  </CustomField> */}
+                  <CustomField
+                    type="select"
+                    control={form.control}
+                    name="staff_role"
+                    label="Staff Role"
+                    placeholder="Select a role"
+                    defaultValue={form.getValues("staff_role")}
+                  >
+                    {staffRoleOptions.map((option) => (
+                      <SelectItem value={option.value.toString()} key={option.value}>
+                        {option.label}
+                      </SelectItem>
                     ))}
                   </CustomField>
 

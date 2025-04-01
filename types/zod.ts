@@ -153,9 +153,9 @@ export const UpdateDeliverySchema = z.object({
   records: z.array(
     z.object({
       customer_id: z.number().int().positive(),
-      breakfast: z.enum(["P", "A", "H"]),
-      dinner: z.enum(["P", "A", "H"]),
-      lunch: z.enum(["P", "A", "H"]),
+      breakfast: z.string().regex(/^[PA]{1}$/),
+      dinner: z.string().regex(/^[PA]{1}$/),
+      lunch: z.string().regex(/^[PA]{1}$/),
     })
   ),
 })
@@ -164,7 +164,7 @@ export const UpdateMonthDeliverySchema = z.object({
   month_year: z.string().regex(/^\d{4}-\d{2}$/, "Month must be in YYYY-MM format"),
   day: z.coerce.number().int().min(1).max(31),
   customer_id: z.coerce.number().int().positive().optional(),
-  records: z.record(z.string().regex(/^day([1-9]|[12][0-9]|3[01])$/), z.string().regex(/^[PAH]{3}$/)),
+  records: z.record(z.string().regex(/^day([1-9]|[12][0-9]|3[01])$/), z.string().regex(/^[PA]{3}$/)),
 })
 
 export const AddonSchema = z.object({

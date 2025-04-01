@@ -34,9 +34,9 @@ type AttendanceData = {
   year: string
   details: {
     date: string
-    breakfast: string
-    lunch: string
-    dinner: string
+    breakfast: boolean
+    lunch: boolean
+    dinner: boolean
     custom: string | null
   }[]
   logo_url?: string
@@ -339,14 +339,12 @@ export class PDFGenerator {
           logo_url: data.logo_url || "",
         })
         this.addHR()
-        function getDeliveryValue(value: string): string {
+        function getDeliveryValue(value: boolean): string {
           switch (value) {
-            case "P":
+            case true:
               return "Yes"
-            case "A":
-              return "x"
-            case "H":
-              return "Holiday"
+            case false:
+              return "No"
             default:
               return "-"
           }
@@ -363,9 +361,9 @@ export class PDFGenerator {
 
         const summary = data.details.reduce(
           (acc, day) => {
-            if (day.lunch === "P") acc.lunch++
-            if (day.dinner === "p") acc.dinner++
-            if (day.custom === "P") acc.custom++
+            if (day.lunch) acc.lunch++
+            if (day.dinner) acc.dinner++
+            if (day.custom) acc.custom++
             return acc
           },
           { lunch: 0, dinner: 0, custom: 0 }
