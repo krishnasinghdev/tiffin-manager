@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useId, useRef, useState } from "react"
+import { useId, useRef, useState } from "react"
 import Link from "next/link"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { DialogDescription } from "@radix-ui/react-dialog"
@@ -14,7 +14,7 @@ import {
 } from "@tanstack/react-table"
 import type { ColumnDef, ColumnFiltersState, PaginationState, SortingState, VisibilityState } from "@tanstack/react-table"
 import dayjs from "dayjs"
-import { createParser, parseAsBoolean, parseAsInteger, parseAsString, useQueryState } from "nuqs"
+import { createParser, parseAsBoolean, parseAsString, useQueryState } from "nuqs"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
@@ -55,22 +55,6 @@ type DeliveryRecord = {
 }
 type UpdatedDelivery = Record<MealType, boolean>
 
-// Utility Components
-const DeliveryCheckbox = ({
-  checked,
-  onChange,
-  idPrefix,
-}: {
-  checked: boolean
-  onChange: (checked: boolean) => void
-  idPrefix: string
-}) => (
-  <div className="flex items-center space-x-2">
-    <Checkbox id={idPrefix} checked={checked} onCheckedChange={onChange} />
-    <Label htmlFor={idPrefix}>Present</Label>
-  </div>
-)
-
 // Main Component
 export default function DeliveryPage() {
   const id = useId()
@@ -78,7 +62,6 @@ export default function DeliveryPage() {
   const inputRef = useRef<HTMLInputElement>(null)
   const [currentDate, setCurrentDate] = useQueryState("date", parseAsDate.withDefault(dayjs()))
   const [openDialog, setOpenDialog] = useQueryState("dialog", parseAsBoolean.withDefault(false))
-  const [cId, setCId] = useQueryState("id", parseAsInteger.withDefault(0))
   const [cName, setCName] = useQueryState("name", parseAsString.withDefault(""))
   const [updatedData, setUpdatedData] = useState<Map<number, UpdatedDelivery>>(new Map())
   const [allMeals, setAllMeals] = useState<Record<MealType, boolean>>({
@@ -156,17 +139,17 @@ export default function DeliveryPage() {
     {
       size: 36,
       header: () => (
-        <div className="my-1 flex max-w-30 flex-col items-start whitespace-nowrap">
-          <div className="mb-2 self-center">Lunch</div>
-          <DeliveryCheckbox checked={allMeals.lunch} onChange={(checked) => updateAllMeals("lunch", checked)} idPrefix="all-lunch" />
+        <div className="my-1 flex max-w-30 gap-2 whitespace-nowrap">
+          <Checkbox id="all-lunch" checked={allMeals.lunch} onCheckedChange={() => updateAllMeals("lunch", !allMeals.lunch)} />
+          <div className="self-center">Lunch</div>
         </div>
       ),
       accessorKey: "lunch",
       cell: ({ row }) => (
-        <DeliveryCheckbox
+        <Checkbox
+          id={`lunch-${row.original.customer_id}`}
           checked={getMealValue(row.original.customer_id, "lunch")}
-          onChange={(checked) => updateMeal(row.original.customer_id, "lunch", checked)}
-          idPrefix={`lunch-${row.original.customer_id}`}
+          onCheckedChange={() => updateMeal(row.original.customer_id, "lunch", !getMealValue(row.original.customer_id, "lunch"))}
         />
       ),
       enableSorting: false,
@@ -174,21 +157,18 @@ export default function DeliveryPage() {
     {
       size: 36,
       header: () => (
-        <div className="my-1 flex max-w-30 flex-col items-start whitespace-nowrap">
-          <div className="mb-2 self-center">Dinner</div>
-          <DeliveryCheckbox
-            checked={allMeals.dinner}
-            onChange={(checked) => updateAllMeals("dinner", checked)}
-            idPrefix="all-dinner"
-          />
+        <div className="my-1 flex max-w-30 gap-2 whitespace-nowrap">
+          <Checkbox id="all-dinner" checked={allMeals.dinner} onCheckedChange={() => updateAllMeals("dinner", !allMeals.dinner)} />
+
+          <div className="self-center">Dinner</div>
         </div>
       ),
       accessorKey: "dinner",
       cell: ({ row }) => (
-        <DeliveryCheckbox
+        <Checkbox
+          id={`dinner-${row.original.customer_id}`}
           checked={getMealValue(row.original.customer_id, "dinner")}
-          onChange={(checked) => updateMeal(row.original.customer_id, "dinner", checked)}
-          idPrefix={`dinner-${row.original.customer_id}`}
+          onCheckedChange={() => updateMeal(row.original.customer_id, "dinner", !getMealValue(row.original.customer_id, "dinner"))}
         />
       ),
       enableSorting: false,
@@ -203,8 +183,15 @@ export default function DeliveryPage() {
           variant={row.original.addon_amount ? "outline" : "secondary"}
           onClick={() => {
             setOpenDialog(true)
-            setCId(row.original.customer_id)
             setCName(row.original.name)
+            const customer = deliveriesResponse?.data.find((c) => c.customer_id === row.original.customer_id)
+
+            if (customer && customer.id) {
+              form.setValue("delivery_id", customer.id)
+              form.setValue("addon_amount", customer.addon_amount)
+              form.setValue("addon_detail", customer.addon_detail)
+              form.setValue("date", currentDate.format("YYYY-MM-DD"))
+            }
           }}
         >
           {row.original.addon_amount ? (
@@ -221,7 +208,6 @@ export default function DeliveryPage() {
       ),
     },
   ]
-
   const table = useReactTable({
     data: deliveriesResponse?.data || [],
     columns,
@@ -294,18 +280,6 @@ export default function DeliveryPage() {
     mode: "onTouched",
   })
 
-  useEffect(() => {
-    if (!openDialog) return
-
-    const customer = deliveriesResponse?.data.find((c) => c.customer_id === cId)
-    form.reset({
-      date: currentDate.format("YYYY-MM-DD"),
-      delivery_id: customer?.id ?? undefined,
-      addon_amount: customer?.addon_amount || undefined,
-      addon_detail: customer?.addon_detail ?? "",
-    })
-  }, [openDialog, cId, currentDate, deliveriesResponse?.data, form])
-
   const onSubmit = async (values: AddonSchemaType) => {
     try {
       const { success, message } = await addonMutation.mutateAsync(values)
@@ -324,9 +298,8 @@ export default function DeliveryPage() {
 
   const resetDialog = () => {
     setCName(null)
-    setCId(null)
     setOpenDialog(false)
-    form.reset()
+    form.reset(undefined, { keepValues: false })
   }
 
   return (

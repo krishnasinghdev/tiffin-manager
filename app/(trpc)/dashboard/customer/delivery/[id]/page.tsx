@@ -69,22 +69,6 @@ type UpdateDeliveryType = {
   customer_id: number
 }
 
-// Replace MealRadioGroup with MealCheckbox
-const MealCheckbox = ({
-  checked,
-  onChange,
-  idPrefix,
-}: {
-  checked: boolean
-  onChange: (checked: boolean) => void
-  idPrefix: string
-}) => (
-  <div className="flex items-center space-x-2">
-    <Checkbox id={idPrefix} checked={checked} onCheckedChange={onChange} />
-    <Label htmlFor={idPrefix}>Present</Label>
-  </div>
-)
-
 export default function CustomerDeliveryPage() {
   const params = useParams()
   const router = useRouter()
@@ -105,18 +89,16 @@ export default function CustomerDeliveryPage() {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
 
   const {
-    data: deliveriesResponse,
-    isLoading,
-
     isError,
+    isLoading,
+    data: deliveriesResponse,
   } = clientApi.delivery.getCustomerMonthDeliveries.useQuery({
     customer_id: Number(params.id),
-
     month: currentMonth.format("MM-YYYY"),
   })
 
   // Update handlers for delivery status
-  const handleMealChange = (date: string, field: MealType, value: boolean) => {
+  const handleMealChange = (date: string, field: MealType, value: any) => {
     setUpdatedData((prev) => {
       const newMap = new Map(prev)
       const originalItem = deliveriesResponse?.data?.deliveries.find((item) => item.date === date)
@@ -128,7 +110,7 @@ export default function CustomerDeliveryPage() {
         customer_id: Number(params.id),
       }
 
-      newMap.set(date, { ...currentUpdate, [field]: value })
+      newMap.set(date, { ...currentUpdate, [field]: Boolean(value) })
       return newMap
     })
   }
@@ -160,16 +142,16 @@ export default function CustomerDeliveryPage() {
       size: 28,
       header: () => (
         <div className="flex items-center gap-2 whitespace-nowrap">
-          <MealCheckbox checked={allMeals.lunch} onChange={(checked) => handleAllMealChange("lunch", checked)} idPrefix="all-lunch" />
+          <Checkbox id="all-lunch" checked={allMeals.lunch} onCheckedChange={() => handleAllMealChange("lunch", !allMeals.lunch)} />
           <p>Lunch</p>
         </div>
       ),
       accessorKey: "lunch",
       cell: ({ row }) => (
-        <MealCheckbox
+        <Checkbox
+          id={`lunch-${row.getValue("date")}`}
           checked={getMealStatus(row.getValue("date"), "lunch")}
-          onChange={(checked) => handleMealChange(row.getValue("date"), "lunch", checked)}
-          idPrefix={`lunch-${row.getValue("date")}`}
+          onCheckedChange={(checked) => handleMealChange(row.getValue("date"), "lunch", checked)}
         />
       ),
       enableSorting: false,
@@ -178,20 +160,20 @@ export default function CustomerDeliveryPage() {
       size: 28,
       header: () => (
         <div className="flex items-center gap-2 whitespace-nowrap">
-          <MealCheckbox
+          <Checkbox
+            id="all-dinner"
             checked={allMeals.dinner}
-            onChange={(checked) => handleAllMealChange("dinner", checked)}
-            idPrefix="all-dinner"
+            onCheckedChange={() => handleAllMealChange("dinner", !allMeals.dinner)}
           />
           <p>Dinner</p>
         </div>
       ),
       accessorKey: "dinner",
       cell: ({ row }) => (
-        <MealCheckbox
+        <Checkbox
+          id={`dinner-${row.getValue("date")}`}
           checked={getMealStatus(row.getValue("date"), "dinner")}
-          onChange={(checked) => handleMealChange(row.getValue("date"), "dinner", checked)}
-          idPrefix={`dinner-${row.getValue("date")}`}
+          onCheckedChange={(checked) => handleMealChange(row.getValue("date"), "dinner", checked)}
         />
       ),
       enableSorting: false,

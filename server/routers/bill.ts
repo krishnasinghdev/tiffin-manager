@@ -144,6 +144,7 @@ export const billRouter = createTRPCRouter({
         breakfast: plan.breakfast,
         lunch: plan.lunch,
         dinner: plan.dinner,
+        duration: plan.duration,
       })
       .from(customer)
       .leftJoin(plan, eq(customer.plan_id, plan.id))
@@ -180,9 +181,8 @@ export const billRouter = createTRPCRouter({
     if (customerData.lunch) frequency++
     if (customerData.dinner) frequency++
     const end_date = dayjs(start_date)
-      .add(total_tiffins / frequency, "day")
+      .add(customerData.duration ?? 1, "day")
       .format("YYYY-MM-DD")
-
     const counts = {
       breakfast: (customerData.breakfast && Math.floor(total_tiffins / frequency)) || 0,
       lunch: (customerData.lunch && Math.floor(total_tiffins / frequency)) || 0,

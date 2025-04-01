@@ -37,23 +37,25 @@ export const deliveryRouter = createTRPCRouter({
           lunch: sql<boolean>`COALESCE(SUBSTRING(COALESCE(${delivery}.${sql.raw(dayColumn)}, 'AAA'), 2, 1) = 'P', false)`,
           dinner: sql<boolean>`COALESCE(SUBSTRING(COALESCE(${delivery}.${sql.raw(dayColumn)}, 'AAA'), 3, 1) = 'P', false)`,
           addon_amount: sql<string>`
-        COALESCE(
-          (SELECT jsonb_agg(e->'amount')::text FROM
-          jsonb_array_elements(${delivery}.add_ons) e
-           WHERE (e->>'day')::int = ${dayNum}
-          ),
-          ''
-        )
-        `,
+          COALESCE(
+            (SELECT (jsonb_array_elements(${delivery}.add_ons)->>'amount')::text FROM
+            jsonb_array_elements(${delivery}.add_ons) e
+            WHERE (e->>'day')::int = ${dayNum}
+            LIMIT 1
+            ),
+            ''
+          )
+          `,
           addon_detail: sql<string>`
-        COALESCE(
-          (SELECT jsonb_agg(e->'detail')::text FROM
-          jsonb_array_elements(${delivery}.add_ons) e
-           WHERE (e->>'day')::int = ${dayNum}
-          ),
-          ''
-        )
-        `,
+          COALESCE(
+            (SELECT (jsonb_array_elements(${delivery}.add_ons)->>'detail')::text FROM
+            jsonb_array_elements(${delivery}.add_ons) e
+            WHERE (e->>'day')::int = ${dayNum}
+            LIMIT 1
+            ),
+            ''
+          )
+          `,
         })
         .from(customer)
         .leftJoin(delivery, and(eq(delivery.customer_id, customer.id), eq(delivery.month_year, month_year)))
@@ -119,6 +121,11 @@ export const deliveryRouter = createTRPCRouter({
     }
     if (!record) throw new Error("Delivery not found")
 
+    const addonMap = new Map<number, any>()
+    record.add_ons?.forEach((addon) => {
+      addonMap.set(Number(addon.day), addon)
+    })
+
     for (let i = 1; i <= daysInMonth; i++) {
       const dayKey = `day${i}` as keyof typeof delivery.$inferSelect
       const status = record ? record[dayKey] : undefined
@@ -127,16 +134,13 @@ export const deliveryRouter = createTRPCRouter({
       const lunch = status && typeof status === "string" ? status[1] === "P" : false
       const dinner = status && typeof status === "string" ? status[2] === "P" : false
 
-      // Find any add-on for this day
-      const addon = record?.add_ons?.find((a: any) => Number(a.day) === i) || null
-
       resultArray.push({
-        date: `${month_year}-${i.toString().padStart(2, "0")}`,
-        breakfast,
         lunch,
         dinner,
-        addon_amount: addon ? addon.amount : "",
-        addon_detail: addon ? addon.detail : "",
+        breakfast,
+        date: `${month_year}-${i.toString().padStart(2, "0")}`,
+        addon_amount: addonMap.get(i) ? addonMap.get(i).amount : "",
+        addon_detail: addonMap.get(i) ? addonMap.get(i).detail : "",
       })
     }
 

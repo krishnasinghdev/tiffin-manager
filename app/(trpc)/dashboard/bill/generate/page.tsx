@@ -287,7 +287,7 @@ function BillForm({ billData, billType, onSubmit }: BillFormProps) {
       payment_status: billType === "random" ? "unpaid" : "advance",
     },
   })
-
+  console.log(form.formState.errors, form.formState)
   useEffect(() => {
     if (billType === "regular") form.setValue("items", undefined)
     // if (billType === "random") form.setValue("total_amount", 0)

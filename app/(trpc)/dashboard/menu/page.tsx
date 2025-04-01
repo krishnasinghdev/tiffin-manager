@@ -97,7 +97,10 @@ export default function PlanPage() {
                   <CustomField type="checkbox" control={form.control} name="lunch" label="Lunch" />
                   <CustomField type="checkbox" control={form.control} name="dinner" label="Dinner" />
                 </div>
-                <CustomField type="checkbox" control={form.control} name="is_active" label="Active" />
+                <div className="grid grid-cols-2 gap-4">
+                  <CustomField type="number" control={form.control} name="duration" label="Total Days" />
+                  <CustomField type="checkbox" control={form.control} name="is_active" label="Active" />
+                </div>
                 <Button
                   type="submit"
                   className="w-full"
@@ -157,7 +160,15 @@ export default function PlanPage() {
             <Card className="flex flex-col transition-all hover:shadow-lg" key={plan.id}>
               <div className={cn(getBadgeColor(plan.is_active), "flex items-center justify-between rounded-t-lg px-4 py-2")}>
                 <p>{plan.is_active ? "Active" : "Inactive"}</p>
-                <Button variant="secondary" onClick={() => handlePlanEdit(plan)}>
+                <Button
+                  variant="secondary"
+                  onClick={() =>
+                    handlePlanEdit({
+                      ...plan,
+                      duration: plan.duration ?? 0,
+                    })
+                  }
+                >
                   <Icons.Edit aria-hidden="true" />
                   Edit Plan
                 </Button>

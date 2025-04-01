@@ -112,6 +112,7 @@ export const CreatePlanSchema = z.object({
   total_tiffins: z.coerce.number({ required_error: "Total tiffins is required" }).min(1, "Total tiffins must be at least 1"),
   plan_description: z.string({ required_error: "Description is required" }).min(5, "Description must be 5+ characters"),
   price_per_tiffin: requiredFinancialField,
+  duration: z.coerce.number({ required_error: "Total days is required" }).min(1, "Total days must be at least 1"),
 })
 
 export const CreateNoticeSchema = z.object({
@@ -217,7 +218,7 @@ export const CreateBillSchema = z
       )
       .optional(),
   })
-  .refine((data) => (data.bill_type === "regular" ? data.start_date && data.end_date && data.total_tiffins !== undefined : true), {
+  .refine((data) => (data.bill_type === "regular" ? data.start_date && data.end_date && data.total_amount !== undefined : true), {
     message: "Start date, end date, and total tiffins are required for regular bills",
     path: ["bill_type"],
   })
@@ -231,21 +232,16 @@ export const CreateBillSchema = z
     { message: "Amount paid cannot exceed total amount", path: ["amount_paid"] }
   )
 
-export const UpdateBillSchema = z
-  .object({
-    id: idField,
-    payment_date: date_schema,
-    amount_paid: requiredFinancialField,
-    remaining_amount: requiredFinancialField,
-    payment_mode: z.enum(["cash", "online"], {
-      required_error: "Payment mode is required",
-      invalid_type_error: "Invalid payment mode",
-    }),
-  })
-  .refine((data) => Number(data.amount_paid) + Number(data.remaining_amount) >= 0, {
-    message: "Amount paid plus remaining amount cannot be negative",
-    path: ["remaining_amount"],
-  })
+export const UpdateBillSchema = z.object({
+  id: idField,
+  payment_date: date_schema,
+  amount_paid: requiredFinancialField,
+  remaining_amount: requiredFinancialField,
+  payment_mode: z.enum(["cash", "online"], {
+    required_error: "Payment mode is required",
+    invalid_type_error: "Invalid payment mode",
+  }),
+})
 
 export const EditVendorSchema = z.object({
   id: idField,
