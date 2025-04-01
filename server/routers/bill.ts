@@ -144,6 +144,7 @@ export const billRouter = createTRPCRouter({
         breakfast: plan.breakfast,
         lunch: plan.lunch,
         dinner: plan.dinner,
+        duration: plan.duration,
       })
       .from(customer)
       .leftJoin(plan, eq(customer.plan_id, plan.id))
@@ -180,9 +181,8 @@ export const billRouter = createTRPCRouter({
     if (customerData.lunch) frequency++
     if (customerData.dinner) frequency++
     const end_date = dayjs(start_date)
-      .add(total_tiffins / frequency, "day")
+      .add(customerData.duration ?? 1, "day")
       .format("YYYY-MM-DD")
-
     const counts = {
       breakfast: (customerData.breakfast && Math.floor(total_tiffins / frequency)) || 0,
       lunch: (customerData.lunch && Math.floor(total_tiffins / frequency)) || 0,
@@ -386,7 +386,6 @@ export const billRouter = createTRPCRouter({
     if (!ctx.session?.user.vendor_id) throw new Error("Unauthorized")
 
     const [billData] = await ctx.db.select().from(bill).where(eq(bill.id, input.id)).limit(1)
-    console.log("billData", billData, billData?.bill_detail)
     const billDetail = billData?.bill_detail as MealCountBillDetails
     if (!billData) throw new Error("Bill not found")
 
@@ -421,7 +420,6 @@ export const billRouter = createTRPCRouter({
           acc.l += code[1] === "P" ? 1 : 0
           acc.d += code[2] === "P" ? 1 : 0
         }
-        console.log("addonn", rec.add_ons)
         rec.add_ons?.forEach((addon: { day: number; amount: string }) => {
           const date = base.date(addon.day)
           if (date.isValid() && !date.isBefore(start) && !date.isAfter(end)) {
@@ -437,12 +435,9 @@ export const billRouter = createTRPCRouter({
     )
 
     const addonDiff = counts.aTotal - (billDetail.previous_addon_amount || 0)
-    console.log("addonDiff", addonDiff)
-    const total = Number(billData.total_amount) + addonDiff
-    console.log("total", total)
-    const remaining = Number(billData.remaining_amount) + addonDiff
-    console.log("remaining", remaining)
     const totalDelivered = counts.b + counts.l + counts.d
+    const total = Number(billData.total_amount) + addonDiff
+    const remaining = Number(billData.remaining_amount) + addonDiff
 
     const updatedDetail = {
       ...billDetail,
@@ -453,7 +448,7 @@ export const billRouter = createTRPCRouter({
       plan_id: billDetail.plan_id,
       price_per_tiffin: billDetail.price_per_tiffin || 0,
     }
-    console.log(updatedDetail, total, remaining, totalDelivered)
+
     const [updated] = await ctx.db
       .update(bill)
       .set({

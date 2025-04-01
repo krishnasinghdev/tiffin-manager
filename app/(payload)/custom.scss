@@ -118,134 +118,134 @@
   --theme-accent-1000: var(--color-accent-1000);
 }
 
-/* Nav Button */
-.hamburger__wrapper {
-  background-color: var(--theme-elevation-100);
-  border: 1px solid var(--theme-elevation-200);
-}
-.hamburger:before {
-  background-color: var(--theme-elevation-100);
-  border: 1px solid var(--theme-elevation-200);
-}
-.hamburger:after {
-  background-color: var(--theme-elevation-100);
-  border: 1px solid var(--theme-elevation-200);
-}
+// /* Nav Button */
+// .hamburger__wrapper {
+//   background-color: var(--theme-elevation-100);
+//   border: 1px solid var(--theme-elevation-200);
+// }
+// .hamburger:before {
+//   background-color: var(--theme-elevation-100);
+//   border: 1px solid var(--theme-elevation-200);
+// }
+// .hamburger:after {
+//   background-color: var(--theme-elevation-100);
+//   border: 1px solid var(--theme-elevation-200);
+// }
 
-/* Nav Group Toggle (empty) */
-.nav-group__toggle {
-}
+// /* Nav Group Toggle (empty) */
+// .nav-group__toggle {
+// }
 
-/* Nav Group Icon */
-.nav-group__indicator svg .stroke {
-  stroke: var(--theme-elevation-700);
-}
+// /* Nav Group Icon */
+// .nav-group__indicator svg .stroke {
+//   stroke: var(--theme-elevation-700);
+// }
 
-/* Nav Group Label */
-.nav-group__label {
-  color: var(--theme-elevation-700);
-}
+// /* Nav Group Label */
+// .nav-group__label {
+//   color: var(--theme-elevation-700);
+// }
 
-/* Nav */
-.nav {
-  background-color: var(--theme-elevation-100);
-}
+// /* Nav */
+// .nav {
+//   background-color: var(--theme-elevation-100);
+// }
 
-/* Dashboard Card Labels */
-.dashboard__label {
-  fontfamily: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
-}
+// /* Dashboard Card Labels */
+// .dashboard__label {
+//   fontfamily: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+// }
 
-/* Dashboard Card */
-.card {
-  background-color: var(--theme-elevation-100);
-  border: 1px solid var(--theme-elevation-200);
-}
+// /* Dashboard Card */
+// .card {
+//   background-color: var(--theme-elevation-100);
+//   border: 1px solid var(--theme-elevation-200);
+// }
 
-/* Dashboard Card Title */
-.card__title {
-  fontfamily: Impact;
-}
+// /* Dashboard Card Title */
+// .card__title {
+//   fontfamily: Impact;
+// }
 
-/* Dashboard Card Action Button (empty) */
-.card__actions {
-}
+// /* Dashboard Card Action Button (empty) */
+// .card__actions {
+// }
 
-/* Background (empty) */
-.template-default__wrap {
-}
+// /* Background (empty) */
+// .template-default__wrap {
+// }
 
-/* Primary Button */
-.btn--style-primary {
-  background-color: var(--theme-elevation-900);
-}
+// /* Primary Button */
+// .btn--style-primary {
+//   background-color: var(--theme-elevation-900);
+// }
 
-/* Pill (empty) */
-.pill {
-}
+// /* Pill (empty) */
+// .pill {
+// }
 
-/* Input Field */
-.field-type.text:not(.has-many) input {
-  border: 1px solid var(--theme-elevation-200);
-}
+// /* Input Field */
+// .field-type.text:not(.has-many) input {
+//   border: 1px solid var(--theme-elevation-200);
+// }
 
-/* Document Header (empty) */
-.doc-header__title {
-}
+// /* Document Header (empty) */
+// .doc-header__title {
+// }
 
-/* Success Toast Close Button (empty) */
-.Toastify .Toastify__close-button--success {
-}
+// /* Success Toast Close Button (empty) */
+// .Toastify .Toastify__close-button--success {
+// }
 
-/* Success Toast Progress Bar (empty) */
-.Toastify .Toastify__toast--success .Toastify__progress-bar {
-}
+// /* Success Toast Progress Bar (empty) */
+// .Toastify .Toastify__toast--success .Toastify__progress-bar {
+// }
 
-/* Success Toast (empty) */
-.Toastify .Toastify__toast--success {
-}
+// /* Success Toast (empty) */
+// .Toastify .Toastify__toast--success {
+// }
 
-/* Success Toast Close Button (empty) */
-.Toastify .Toastify__close-button--error {
-}
+// /* Success Toast Close Button (empty) */
+// .Toastify .Toastify__close-button--error {
+// }
 
-/* Success Toast Progress Bar (empty) */
-.Toastify .Toastify__toast--error .Toastify__progress-bar {
-}
+// /* Success Toast Progress Bar (empty) */
+// .Toastify .Toastify__toast--error .Toastify__progress-bar {
+// }
 
-/* Success Toast (empty) */
-.Toastify .Toastify__toast--error {
-}
+// /* Success Toast (empty) */
+// .Toastify .Toastify__toast--error {
+// }
 
-/* Collapsible */
-.collapsible {
-  border-radius: 4px;
-}
+// /* Collapsible */
+// .collapsible {
+//   border-radius: 4px;
+// }
 
-/* Collapsible Content */
-.collapsible__content {
-  background-color: var(--theme-elevation-0);
-}
+// /* Collapsible Content */
+// .collapsible__content {
+//   background-color: var(--theme-elevation-0);
+// }
 
-/* Collapsible Toggle */
-.collapsible--style-default > .collapsible__toggle-wrap .collapsible__toggle {
-  background-color: var(--theme-elevation-50);
-}
+// /* Collapsible Toggle */
+// .collapsible--style-default > .collapsible__toggle-wrap .collapsible__toggle {
+//   background-color: var(--theme-elevation-50);
+// }
 
-/* Collapsible Style Default */
-.collapsible--style-default {
-  border: 1px solid var(--theme-elevation-200);
-}
+// /* Collapsible Style Default */
+// .collapsible--style-default {
+//   border: 1px solid var(--theme-elevation-200);
+// }
 
-/* Table Row Odd */
-.table tbody tr:nth-child(odd) {
-  background-color: var(--theme-elevation-50);
-}
+// /* Table Row Odd */
+// .table tbody tr:nth-child(odd) {
+//   background-color: var(--theme-elevation-50);
+// }
 
-/* Search Filter Wrapper (empty) */
-.list-controls__wrap {
-}
+// /* Search Filter Wrapper (empty) */
+// .list-controls__wrap {
+// }
 
-/* Search  Input (empty) */
-.search-filter__input {
-}
+// /* Search  Input (empty) */
+// .search-filter__input {
+// }

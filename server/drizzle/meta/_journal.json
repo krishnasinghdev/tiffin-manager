@@ -8,6 +8,20 @@
       "when": 1741447879718,
       "tag": "0000_regular_marauders",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1743493862413,
+      "tag": "0001_modern_garia",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1743494077911,
+      "tag": "0002_stale_crusher_hogan",
+      "breakpoints": true
     }
   ]
 }

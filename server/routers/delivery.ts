@@ -33,27 +33,29 @@ export const deliveryRouter = createTRPCRouter({
           name: customer.name,
           customer_id: customer.id,
           address: customer.address,
-          breakfast: sql<string>`COALESCE(SUBSTRING(COALESCE(${delivery}.${sql.raw(dayColumn)}, 'AAA'), 1, 1), '')`,
-          lunch: sql<string>`COALESCE(SUBSTRING(COALESCE(${delivery}.${sql.raw(dayColumn)}, 'AAA'), 2, 1), '')`,
-          dinner: sql<string>`COALESCE(SUBSTRING(COALESCE(${delivery}.${sql.raw(dayColumn)}, 'AAA'), 3, 1), '')`,
+          breakfast: sql<boolean>`COALESCE(SUBSTRING(COALESCE(${delivery}.${sql.raw(dayColumn)}, 'AAA'), 1, 1) = 'P', false)`,
+          lunch: sql<boolean>`COALESCE(SUBSTRING(COALESCE(${delivery}.${sql.raw(dayColumn)}, 'AAA'), 2, 1) = 'P', false)`,
+          dinner: sql<boolean>`COALESCE(SUBSTRING(COALESCE(${delivery}.${sql.raw(dayColumn)}, 'AAA'), 3, 1) = 'P', false)`,
           addon_amount: sql<string>`
-        COALESCE(
-          (SELECT jsonb_agg(e->'amount')::text FROM
-          jsonb_array_elements(${delivery}.add_ons) e
-           WHERE (e->>'day')::int = ${dayNum}
-          ),
-          ''
-        )
-        `,
+          COALESCE(
+            (SELECT (jsonb_array_elements(${delivery}.add_ons)->>'amount')::text FROM
+            jsonb_array_elements(${delivery}.add_ons) e
+            WHERE (e->>'day')::int = ${dayNum}
+            LIMIT 1
+            ),
+            ''
+          )
+          `,
           addon_detail: sql<string>`
-        COALESCE(
-          (SELECT jsonb_agg(e->'detail')::text FROM
-          jsonb_array_elements(${delivery}.add_ons) e
-           WHERE (e->>'day')::int = ${dayNum}
-          ),
-          ''
-        )
-        `,
+          COALESCE(
+            (SELECT (jsonb_array_elements(${delivery}.add_ons)->>'detail')::text FROM
+            jsonb_array_elements(${delivery}.add_ons) e
+            WHERE (e->>'day')::int = ${dayNum}
+            LIMIT 1
+            ),
+            ''
+          )
+          `,
         })
         .from(customer)
         .leftJoin(delivery, and(eq(delivery.customer_id, customer.id), eq(delivery.month_year, month_year)))
@@ -119,24 +121,26 @@ export const deliveryRouter = createTRPCRouter({
     }
     if (!record) throw new Error("Delivery not found")
 
+    const addonMap = new Map<number, any>()
+    record.add_ons?.forEach((addon) => {
+      addonMap.set(Number(addon.day), addon)
+    })
+
     for (let i = 1; i <= daysInMonth; i++) {
       const dayKey = `day${i}` as keyof typeof delivery.$inferSelect
       const status = record ? record[dayKey] : undefined
 
-      const breakfast = status && typeof status === "string" ? status[0] : "A"
-      const lunch = status && typeof status === "string" ? status[1] : "A"
-      const dinner = status && typeof status === "string" ? status[2] : "A"
-
-      // Find any add-on for this day
-      const addon = record?.add_ons?.find((a: any) => Number(a.day) === i) || null
+      const breakfast = status && typeof status === "string" ? status[0] === "P" : false
+      const lunch = status && typeof status === "string" ? status[1] === "P" : false
+      const dinner = status && typeof status === "string" ? status[2] === "P" : false
 
       resultArray.push({
+        lunch,
+        dinner,
+        breakfast,
         date: `${month_year}-${i.toString().padStart(2, "0")}`,
-        breakfast: breakfast as "P" | "A" | "L",
-        lunch: lunch as "P" | "A" | "L",
-        dinner: dinner as "P" | "A" | "L",
-        addon_amount: addon ? addon.amount : "",
-        addon_detail: addon ? addon.detail : "",
+        addon_amount: addonMap.get(i) ? addonMap.get(i).amount : "",
+        addon_detail: addonMap.get(i) ? addonMap.get(i).detail : "",
       })
     }
 
@@ -170,7 +174,7 @@ export const deliveryRouter = createTRPCRouter({
           // Update existing record
           return ctx.db
             .update(delivery)
-            .set({ [dayFieldKey]: `${r.breakfast}${r.lunch}${r.dinner}` }) // Fixed dinner - was using lunch twice
+            .set({ [dayFieldKey]: `${r.breakfast}${r.lunch}${r.dinner}` })
             .where(and(eq(delivery.customer_id, r.customer_id), eq(delivery.month_year, month_year)))
             .returning()
         } else {
@@ -178,7 +182,7 @@ export const deliveryRouter = createTRPCRouter({
             vendor_id: ctx.session.user.vendor_id,
             month_year: month_year,
             customer_id: r.customer_id,
-            [dayFieldKey]: `${r.breakfast}${r.lunch}${r.dinner}`, // Fixed dinner - was using lunch twice
+            [dayFieldKey]: `${r.breakfast}${r.lunch}${r.dinner}`,
           }
           // Insert new record
           return ctx.db.insert(delivery).values(value).returning()
@@ -191,9 +195,9 @@ export const deliveryRouter = createTRPCRouter({
         customer_id: customer.id,
         id: delivery.id,
         customer_name: customer.name,
-        breakfast: sql<string>`SUBSTRING(COALESCE(${delivery}.${sql.raw(dayFieldKey)}, 'AAA'), 1, 1)`,
-        lunch: sql<string>`SUBSTRING(COALESCE(${delivery}.${sql.raw(dayFieldKey)}, 'AAA'), 2, 1)`,
-        dinner: sql<string>`SUBSTRING(COALESCE(${delivery}.${sql.raw(dayFieldKey)}, 'AAA'), 3, 1)`,
+        breakfast: sql<boolean>`SUBSTRING(COALESCE(${delivery}.${sql.raw(dayFieldKey)}, 'AAA'), 1, 1) = 'P'`,
+        lunch: sql<boolean>`SUBSTRING(COALESCE(${delivery}.${sql.raw(dayFieldKey)}, 'AAA'), 2, 1) = 'P'`,
+        dinner: sql<boolean>`SUBSTRING(COALESCE(${delivery}.${sql.raw(dayFieldKey)}, 'AAA'), 3, 1) = 'P'`,
       })
       .from(customer)
       .leftJoin(delivery, and(eq(delivery.customer_id, customer.id), eq(delivery.month_year, month_year)))

@@ -7,8 +7,6 @@ import { PageRange } from "@/payload/components/page-range"
 import { Pagination } from "@/payload/components/pagination"
 import configPromise from "@/payload/payload.config"
 
-import PageClient from "./page.client"
-
 export const revalidate = 600
 
 type Args = {
@@ -35,7 +33,6 @@ export default async function Page({ params: paramsPromise }: Args) {
 
   return (
     <div className="pt-24 pb-24">
-      <PageClient />
       <div className="container mb-16">
         <div className="prose dark:prose-invert max-w-none">
           <h1>Posts</h1>
@@ -46,7 +43,7 @@ export default async function Page({ params: paramsPromise }: Args) {
         <PageRange collection="posts" currentPage={posts.page} limit={12} totalDocs={posts.totalDocs} />
       </div>
 
-      <CollectionArchive posts={posts.docs} />
+      <CollectionArchive posts={posts.docs} relationTo="posts" />
 
       <div className="container">
         {posts?.page && posts?.totalPages > 1 && <Pagination page={posts.page} totalPages={posts.totalPages} />}

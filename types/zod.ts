@@ -66,7 +66,7 @@ export const customerSchema = z.object({
     .string({ required_error: "Name is required" })
     .min(2, "Name must be 2+ characters")
     .max(40, "Name must be 40 characters or less"),
-  phone: z.string({ required_error: "Phone is required" }).length(10, "Phone must be exactly 10 digits"),
+  phone: z.coerce.string({ required_error: "Phone is required" }).length(10, "Phone must be exactly 10 digits"),
   address: z
     .string({ required_error: "Address is required" })
     .min(10, "Address must be 10+ characters")
@@ -92,7 +92,7 @@ export const SignUpSchema = z
     name: z.string({ required_error: "Name is required" }).min(2, "Name must be 2+ characters"),
     address: z.string({ required_error: "Address is required" }).min(10, "Address must be 10+ characters"),
     org_name: z.string({ required_error: "Organization name is required" }).min(2, "Organization name must be 2+ characters"),
-    phone: z.string({ required_error: "Phone is required" }).length(10, "Phone must be exactly 10 digits"),
+    phone: z.coerce.string({ required_error: "Phone is required" }).length(10, "Phone must be exactly 10 digits"),
     password: z.string({ required_error: "Password is required" }).min(6, "Password must be 6+ characters"),
     cpassword: z.string({ required_error: "Confirm password is required" }).min(6, "Confirm password must be 6+ characters"),
     service_area: z.array(z.string(), { required_error: "Service area is required" }).min(1, "At least one service area required"),
@@ -112,6 +112,7 @@ export const CreatePlanSchema = z.object({
   total_tiffins: z.coerce.number({ required_error: "Total tiffins is required" }).min(1, "Total tiffins must be at least 1"),
   plan_description: z.string({ required_error: "Description is required" }).min(5, "Description must be 5+ characters"),
   price_per_tiffin: requiredFinancialField,
+  duration: z.coerce.number({ required_error: "Total days is required" }).min(1, "Total days must be at least 1"),
 })
 
 export const CreateNoticeSchema = z.object({
@@ -140,7 +141,7 @@ export const CreateStaffSchema = z.object({
   password: z
     .string({ required_error: "Password is required" })
     .refine((val) => val === "" || val.length >= 6, "Password must be 6+ characters if provided"),
-  phone: z.string({ required_error: "Phone is required" }).length(10, "Phone must be exactly 10 digits"),
+  phone: z.coerce.string({ required_error: "Phone is required" }).length(10, "Phone must be exactly 10 digits"),
   staff_id: z
     .string({ required_error: "Staff ID is required" })
     .min(6, "Staff ID must be 6-8 characters")
@@ -153,9 +154,9 @@ export const UpdateDeliverySchema = z.object({
   records: z.array(
     z.object({
       customer_id: z.number().int().positive(),
-      breakfast: z.enum(["P", "A", "H"]),
-      dinner: z.enum(["P", "A", "H"]),
-      lunch: z.enum(["P", "A", "H"]),
+      breakfast: z.string().regex(/^[PA]{1}$/),
+      dinner: z.string().regex(/^[PA]{1}$/),
+      lunch: z.string().regex(/^[PA]{1}$/),
     })
   ),
 })
@@ -164,7 +165,7 @@ export const UpdateMonthDeliverySchema = z.object({
   month_year: z.string().regex(/^\d{4}-\d{2}$/, "Month must be in YYYY-MM format"),
   day: z.coerce.number().int().min(1).max(31),
   customer_id: z.coerce.number().int().positive().optional(),
-  records: z.record(z.string().regex(/^day([1-9]|[12][0-9]|3[01])$/), z.string().regex(/^[PAH]{3}$/)),
+  records: z.record(z.string().regex(/^day([1-9]|[12][0-9]|3[01])$/), z.string().regex(/^[PA]{3}$/)),
 })
 
 export const AddonSchema = z.object({
@@ -217,7 +218,7 @@ export const CreateBillSchema = z
       )
       .optional(),
   })
-  .refine((data) => (data.bill_type === "regular" ? data.start_date && data.end_date && data.total_tiffins !== undefined : true), {
+  .refine((data) => (data.bill_type === "regular" ? data.start_date && data.end_date && data.total_amount !== undefined : true), {
     message: "Start date, end date, and total tiffins are required for regular bills",
     path: ["bill_type"],
   })
@@ -231,21 +232,16 @@ export const CreateBillSchema = z
     { message: "Amount paid cannot exceed total amount", path: ["amount_paid"] }
   )
 
-export const UpdateBillSchema = z
-  .object({
-    id: idField,
-    payment_date: date_schema,
-    amount_paid: requiredFinancialField,
-    remaining_amount: requiredFinancialField,
-    payment_mode: z.enum(["cash", "online"], {
-      required_error: "Payment mode is required",
-      invalid_type_error: "Invalid payment mode",
-    }),
-  })
-  .refine((data) => Number(data.amount_paid) + Number(data.remaining_amount) >= 0, {
-    message: "Amount paid plus remaining amount cannot be negative",
-    path: ["remaining_amount"],
-  })
+export const UpdateBillSchema = z.object({
+  id: idField,
+  payment_date: date_schema,
+  amount_paid: requiredFinancialField,
+  remaining_amount: requiredFinancialField,
+  payment_mode: z.enum(["cash", "online"], {
+    required_error: "Payment mode is required",
+    invalid_type_error: "Invalid payment mode",
+  }),
+})
 
 export const EditVendorSchema = z.object({
   id: idField,
@@ -257,7 +253,7 @@ export const EditVendorSchema = z.object({
     .string({ required_error: "Organization name is required" })
     .min(2, "Org name must be 2+ characters")
     .max(40, "Org name must be 40 characters or less"),
-  phone: z.string({ required_error: "Phone is required" }).length(10, "Phone must be exactly 10 digits"),
+  phone: z.coerce.string({ required_error: "Phone is required" }).length(10, "Phone must be exactly 10 digits"),
   address: z
     .string({ required_error: "Address is required" })
     .min(10, "Address must be 10+ characters")

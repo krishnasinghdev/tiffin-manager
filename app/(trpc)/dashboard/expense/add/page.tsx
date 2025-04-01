@@ -18,6 +18,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { CommandDialog, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command"
 import { Form } from "@/components/ui/form"
+import { SelectContent, SelectItem } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import CustomField from "@/components/custom-field"
 import { clientApi } from "@/components/trpc-provider"
@@ -228,6 +229,17 @@ function ExpenseForm({ staffId, expenseType, onSubmit }: ExpenseFormProps) {
         <Card className="border-dashed">
           <CardHeader className="p-4">
             <CardTitle className="text-sm font-medium">Expense in {dayjs().format("MMMM")} </CardTitle>
+            {expenseType !== "salary" && (
+              <CustomField type="select" control={form.control} defaultValue={form.getValues("type")} name="type" label="Type">
+                <SelectContent>
+                  <SelectItem value="salary">Salary</SelectItem>
+                  <SelectItem value="rent">Rent</SelectItem>
+                  <SelectItem value="grocery">Grocery</SelectItem>
+                  <SelectItem value="utility">Utility</SelectItem>
+                  <SelectItem value="other">Other</SelectItem>
+                </SelectContent>
+              </CustomField>
+            )}
           </CardHeader>
           <CardContent className="grid gap-4 md:grid-cols-2">
             <CustomField type="date" control={form.control} name="date" label="Date" />

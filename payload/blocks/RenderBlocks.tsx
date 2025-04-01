@@ -5,6 +5,7 @@ import { ArchiveBlock } from "@/payload/blocks/ArchiveBlock/Component"
 import { CallToActionBlock } from "@/payload/blocks/CallToAction/Component"
 import { ContentBlock } from "@/payload/blocks/Content/Component"
 import { FormBlock } from "@/payload/blocks/Form/Component"
+import { LocationGroupBlock } from "@/payload/blocks/location-group/component"
 import { MediaBlock } from "@/payload/blocks/MediaBlock/Component"
 
 const blockComponents = {
@@ -13,6 +14,7 @@ const blockComponents = {
   cta: CallToActionBlock,
   formBlock: FormBlock,
   mediaBlock: MediaBlock,
+  locationGroup: LocationGroupBlock,
 }
 
 export const RenderBlocks: React.FC<{
@@ -29,7 +31,7 @@ export const RenderBlocks: React.FC<{
           const { blockType } = block
 
           if (blockType && blockType in blockComponents) {
-            const Block = blockComponents[blockType]
+            const Block = blockComponents[blockType as keyof typeof blockComponents]
 
             if (Block) {
               return (

@@ -180,6 +180,7 @@ export const plan = pgTable("plans", {
   dinner: boolean("dinner").default(true).notNull(),
   breakfast: boolean("breakfast").default(false).notNull(),
   total_tiffins: integer("total_tiffins").notNull(),
+  duration: integer("duration").default(1),
   price_per_tiffin: numeric("price_per_tiffin", { precision: 10, scale: 2 }).notNull(),
   ...defaultColumns,
 })

@@ -14,7 +14,7 @@ export const Card: React.FC<{
   alignItems?: "center"
   className?: string
   doc?: CardPostData
-  relationTo?: "posts"
+  relationTo?: string
   showCategories?: boolean
   title?: string
 }> = (props) => {
@@ -43,10 +43,8 @@ export const Card: React.FC<{
                 {categories?.map((category, index) => {
                   if (typeof category === "object") {
                     const { title: titleFromCategory } = category
-
-                    const categoryTitle = titleFromCategory || "Untitled category"
-
                     const isLast = index === categories.length - 1
+                    const categoryTitle = titleFromCategory || "Untitled category"
 
                     return (
                       <Fragment key={index}>

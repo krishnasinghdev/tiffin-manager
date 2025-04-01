@@ -8,7 +8,6 @@ export const PostHero: React.FC<{
   post: Post
 }> = ({ post }) => {
   const { categories, heroImage, populatedAuthors, publishedAt, title } = post
-
   const hasAuthors = populatedAuthors && populatedAuthors.length > 0 && formatAuthors(populatedAuthors) !== ""
 
   return (

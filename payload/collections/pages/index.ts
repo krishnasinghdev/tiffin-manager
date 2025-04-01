@@ -5,10 +5,11 @@ import { Archive } from "@/payload/blocks/ArchiveBlock/config"
 import { CallToAction } from "@/payload/blocks/CallToAction/config"
 import { Content } from "@/payload/blocks/Content/config"
 import { FormBlock } from "@/payload/blocks/Form/config"
+import { LocationGroup } from "@/payload/blocks/location-group/config"
 import { MediaBlock } from "@/payload/blocks/MediaBlock/config"
 import { slugField } from "@/payload/fields/slug"
 import { hero } from "@/payload/global/heros/config"
-import { populatePublishedAt } from "@/payload/hooks/populatePublishedAt"
+import { populatePublishedAt } from "@/payload/hooks/populate-publishedat"
 import { generatePreviewPath } from "@/payload/payload-helpers"
 
 import { authenticated } from "../access/authenticated"
@@ -66,7 +67,7 @@ export const Pages: CollectionConfig<"pages"> = {
             {
               name: "layout",
               type: "blocks",
-              blocks: [CallToAction, Content, MediaBlock, Archive, FormBlock],
+              blocks: [CallToAction, Content, MediaBlock, Archive, FormBlock, LocationGroup],
               required: true,
               admin: {
                 initCollapsed: true,

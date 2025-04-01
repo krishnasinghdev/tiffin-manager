@@ -5,7 +5,7 @@ import React, { useEffect, useRef } from "react"
 import { getClientSideURL } from "@/payload/payload-helpers"
 import { cn } from "@/lib/utils"
 
-import type { Props as MediaProps } from "../types"
+import type { Props as MediaProps } from "./types"
 
 export const VideoMedia: React.FC<MediaProps> = (props) => {
   const { onClick, resource, videoClassName } = props

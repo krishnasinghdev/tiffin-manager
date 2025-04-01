@@ -8,7 +8,7 @@ import { cssVariables } from "@/payload/payload-constants"
 import { getClientSideURL } from "@/payload/payload-helpers"
 import { cn } from "@/lib/utils"
 
-import type { Props as MediaProps } from "../types"
+import type { Props as MediaProps } from "./types"
 
 const { breakpoints } = cssVariables
 

@@ -190,7 +190,7 @@ export default function ExpensePage() {
     resolver: zodResolver(CreateExpenseSchema),
     mode: "onTouched",
   })
-  console.log(form.formState.errors)
+
   const onSubmit = async (values: CreateExpenseType) => {
     try {
       const result = await expenseUpdateMutation.mutateAsync(values)

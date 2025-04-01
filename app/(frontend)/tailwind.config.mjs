@@ -25,19 +25,19 @@ const config = {
     container: {
       center: true,
       padding: {
-        "2xl": "2rem",
         DEFAULT: "1rem",
-        lg: "2rem",
+        sm: "1.5rem",
         md: "2rem",
-        sm: "1rem",
-        xl: "2rem",
+        lg: "2.5rem",
+        xl: "3rem",
+        "2xl": "4rem",
       },
       screens: {
-        "2xl": "86rem",
-        lg: "64rem",
-        md: "48rem",
-        sm: "40rem",
-        xl: "80rem",
+        sm: "640px",
+        md: "768px",
+        lg: "1024px",
+        xl: "1280px",
+        "2xl": "1400px",
       },
     },
     extend: {

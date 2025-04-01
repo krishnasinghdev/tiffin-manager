@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useId, useRef, useState } from "react"
+import { useId, useRef, useState } from "react"
 import Link from "next/link"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { DialogDescription } from "@radix-ui/react-dialog"
@@ -14,7 +14,7 @@ import {
 } from "@tanstack/react-table"
 import type { ColumnDef, ColumnFiltersState, PaginationState, SortingState, VisibilityState } from "@tanstack/react-table"
 import dayjs from "dayjs"
-import { createParser, parseAsBoolean, parseAsInteger, parseAsString, useQueryState } from "nuqs"
+import { createParser, parseAsBoolean, parseAsString, useQueryState } from "nuqs"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
 
@@ -22,12 +22,12 @@ import { AddonSchema, type AddonSchemaType } from "@/types/zod"
 import Icons from "@/lib/icons"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Form } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Pagination, PaginationContent, PaginationItem } from "@/components/ui/pagination"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Table, TableAlert, TableBody, TableCell, TableHead, TableHeader, TableRow, TableSkeleton } from "@/components/ui/table"
 import CustomField from "@/components/custom-field"
@@ -41,32 +41,19 @@ const parseAsDate = createParser({
   eq: (a, b) => dayjs(a).isSame(dayjs(b), "day"),
 })
 
-type DeliveryStatus = "P" | "A" | "H"
 type MealType = "breakfast" | "lunch" | "dinner"
 type DeliveryRecord = {
   customer_id: number
   name: string
   address: string
   id: number | null
-  breakfast: string
-  lunch: string
-  dinner: string
+  breakfast: boolean
+  lunch: boolean
+  dinner: boolean
   addon_amount: string | null
   addon_detail: string | null
 }
-type UpdatedDelivery = Record<MealType, string>
-
-// Utility Components
-const DeliveryRadioGroup = ({ value, onChange, idPrefix }: { value: string; onChange: (value: string) => void; idPrefix: string }) => (
-  <RadioGroup value={value} onValueChange={onChange} className="flex space-x-2">
-    {["P", "A", "H"].map((status) => (
-      <div key={status} className="flex items-center space-x-1">
-        <RadioGroupItem value={status} id={`${idPrefix}-${status}`} />
-        <Label htmlFor={`${idPrefix}-${status}`}>{status}</Label>
-      </div>
-    ))}
-  </RadioGroup>
-)
+type UpdatedDelivery = Record<MealType, boolean>
 
 // Main Component
 export default function DeliveryPage() {
@@ -75,10 +62,13 @@ export default function DeliveryPage() {
   const inputRef = useRef<HTMLInputElement>(null)
   const [currentDate, setCurrentDate] = useQueryState("date", parseAsDate.withDefault(dayjs()))
   const [openDialog, setOpenDialog] = useQueryState("dialog", parseAsBoolean.withDefault(false))
-  const [cId, setCId] = useQueryState("id", parseAsInteger.withDefault(0))
   const [cName, setCName] = useQueryState("name", parseAsString.withDefault(""))
   const [updatedData, setUpdatedData] = useState<Map<number, UpdatedDelivery>>(new Map())
-  const [allMeals, setAllMeals] = useState<Record<MealType, string>>({ breakfast: "A", lunch: "A", dinner: "A" })
+  const [allMeals, setAllMeals] = useState<Record<MealType, boolean>>({
+    breakfast: false,
+    lunch: false,
+    dinner: false,
+  })
   const [tableState, setTableState] = useState<{
     globalFilter: string
     columnFilters: ColumnFiltersState
@@ -106,27 +96,27 @@ export default function DeliveryPage() {
   })
 
   // Handlers
-  const updateMeal = (customerId: number, field: MealType, value: string) => {
+  const updateMeal = (customerId: number, field: MealType, value: boolean) => {
     setUpdatedData((prev) => {
       const newMap = new Map(prev)
       const original = deliveriesResponse?.data.find((item) => item.customer_id === customerId)
       const current = newMap.get(customerId) || {
-        breakfast: original?.breakfast || "A",
-        lunch: original?.lunch || "A",
-        dinner: original?.dinner || "A",
+        breakfast: original?.breakfast ?? false,
+        lunch: original?.lunch ?? false,
+        dinner: original?.dinner ?? false,
       }
       newMap.set(customerId, { ...current, [field]: value })
       return newMap
     })
   }
 
-  const updateAllMeals = (meal: MealType, value: string) => {
+  const updateAllMeals = (meal: MealType, value: boolean) => {
     setAllMeals((prev) => ({ ...prev, [meal]: value }))
     deliveriesResponse?.data.forEach((item) => updateMeal(item.customer_id, meal, value))
   }
 
-  const getMealValue = (customerId: number, field: MealType): string =>
-    updatedData.get(customerId)?.[field] ?? deliveriesResponse?.data.find((item) => item.customer_id === customerId)?.[field] ?? "A"
+  const getMealValue = (customerId: number, field: MealType): boolean =>
+    updatedData.get(customerId)?.[field] ?? deliveriesResponse?.data.find((item) => item.customer_id === customerId)?.[field] ?? false
 
   // Table Configuration
   const columns: ColumnDef<DeliveryRecord>[] = [
@@ -146,42 +136,20 @@ export default function DeliveryPage() {
       cell: ({ row }) => <div className="min-w-[120px]">{row.getValue("address")}</div>,
       enableSorting: false,
     },
-    // {
-    //   size: 36,
-    //   header: () => (
-    //     <div className="flex items-center whitespace-nowrap">
-    //       <DeliveryRadioGroup
-    //         value={allMeals.breakfast}
-    //         onChange={(value) => updateAllMeals("breakfast", value)}
-    //         idPrefix="all-breakfast"
-    //       />
-    //       <span className="ml-2">Breakfast</span>
-    //     </div>
-    //   ),
-    //   accessorKey: "breakfast",
-    //   cell: ({ row }) => (
-    //     <DeliveryRadioGroup
-    //       value={getMealValue(row.original.customer_id, "breakfast")}
-    //       onChange={(value) => updateMeal(row.original.customer_id, "breakfast", value)}
-    //       idPrefix={`breakfast-${row.original.customer_id}`}
-    //     />
-    //   ),
-    //   enableSorting: false,
-    // },
     {
       size: 36,
       header: () => (
-        <div className="flex items-center whitespace-nowrap">
-          <DeliveryRadioGroup value={allMeals.lunch} onChange={(value) => updateAllMeals("lunch", value)} idPrefix="all-lunch" />
-          <span className="ml-2">Lunch</span>
+        <div className="my-1 flex max-w-30 gap-2 whitespace-nowrap">
+          <Checkbox id="all-lunch" checked={allMeals.lunch} onCheckedChange={() => updateAllMeals("lunch", !allMeals.lunch)} />
+          <div className="self-center">Lunch</div>
         </div>
       ),
       accessorKey: "lunch",
       cell: ({ row }) => (
-        <DeliveryRadioGroup
-          value={getMealValue(row.original.customer_id, "lunch")}
-          onChange={(value) => updateMeal(row.original.customer_id, "lunch", value)}
-          idPrefix={`lunch-${row.original.customer_id}`}
+        <Checkbox
+          id={`lunch-${row.original.customer_id}`}
+          checked={getMealValue(row.original.customer_id, "lunch")}
+          onCheckedChange={() => updateMeal(row.original.customer_id, "lunch", !getMealValue(row.original.customer_id, "lunch"))}
         />
       ),
       enableSorting: false,
@@ -189,17 +157,18 @@ export default function DeliveryPage() {
     {
       size: 36,
       header: () => (
-        <div className="flex items-center whitespace-nowrap">
-          <DeliveryRadioGroup value={allMeals.dinner} onChange={(value) => updateAllMeals("dinner", value)} idPrefix="all-dinner" />
-          <span className="ml-2">Dinner</span>
+        <div className="my-1 flex max-w-30 gap-2 whitespace-nowrap">
+          <Checkbox id="all-dinner" checked={allMeals.dinner} onCheckedChange={() => updateAllMeals("dinner", !allMeals.dinner)} />
+
+          <div className="self-center">Dinner</div>
         </div>
       ),
       accessorKey: "dinner",
       cell: ({ row }) => (
-        <DeliveryRadioGroup
-          value={getMealValue(row.original.customer_id, "dinner")}
-          onChange={(value) => updateMeal(row.original.customer_id, "dinner", value)}
-          idPrefix={`dinner-${row.original.customer_id}`}
+        <Checkbox
+          id={`dinner-${row.original.customer_id}`}
+          checked={getMealValue(row.original.customer_id, "dinner")}
+          onCheckedChange={() => updateMeal(row.original.customer_id, "dinner", !getMealValue(row.original.customer_id, "dinner"))}
         />
       ),
       enableSorting: false,
@@ -214,8 +183,15 @@ export default function DeliveryPage() {
           variant={row.original.addon_amount ? "outline" : "secondary"}
           onClick={() => {
             setOpenDialog(true)
-            setCId(row.original.customer_id)
             setCName(row.original.name)
+            const customer = deliveriesResponse?.data.find((c) => c.customer_id === row.original.customer_id)
+
+            if (customer && customer.id) {
+              form.setValue("delivery_id", customer.id)
+              form.setValue("addon_amount", customer.addon_amount)
+              form.setValue("addon_detail", customer.addon_detail)
+              form.setValue("date", currentDate.format("YYYY-MM-DD"))
+            }
           }}
         >
           {row.original.addon_amount ? (
@@ -232,7 +208,6 @@ export default function DeliveryPage() {
       ),
     },
   ]
-
   const table = useReactTable({
     data: deliveriesResponse?.data || [],
     columns,
@@ -274,9 +249,9 @@ export default function DeliveryPage() {
     try {
       const updatedDeliveries = Array.from(updatedData.entries()).map(([customerId, data]) => ({
         customer_id: customerId,
-        lunch: data.lunch as DeliveryStatus,
-        dinner: data.dinner as DeliveryStatus,
-        breakfast: data.breakfast as DeliveryStatus,
+        breakfast: data.breakfast ? "P" : "A",
+        lunch: data.lunch ? "P" : "A",
+        dinner: data.dinner ? "P" : "A",
       }))
 
       const { success, message } = await updateDelivery.mutateAsync({
@@ -305,18 +280,6 @@ export default function DeliveryPage() {
     mode: "onTouched",
   })
 
-  useEffect(() => {
-    if (!openDialog) return
-
-    const customer = deliveriesResponse?.data.find((c) => c.customer_id === cId)
-    form.reset({
-      date: currentDate.format("YYYY-MM-DD"),
-      delivery_id: customer?.id ?? undefined,
-      addon_amount: customer?.addon_amount || undefined,
-      addon_detail: customer?.addon_detail ?? "",
-    })
-  }, [openDialog, cId, currentDate, deliveriesResponse?.data, form])
-
   const onSubmit = async (values: AddonSchemaType) => {
     try {
       const { success, message } = await addonMutation.mutateAsync(values)
@@ -335,9 +298,8 @@ export default function DeliveryPage() {
 
   const resetDialog = () => {
     setCName(null)
-    setCId(null)
     setOpenDialog(false)
-    form.reset()
+    form.reset(undefined, { keepValues: false })
   }
 
   return (
@@ -555,6 +517,10 @@ export default function DeliveryPage() {
           </Pagination>
         </div>
       </div>
+
+      <footer className="text-muted-foreground text-sm">
+        <p>P = Present, A = Absent, H = Holiday</p>
+      </footer>
     </div>
   )
 }

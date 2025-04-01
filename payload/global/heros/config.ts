@@ -1,4 +1,4 @@
-import { FixedToolbarFeature, HeadingFeature, InlineToolbarFeature, lexicalEditor } from "@payloadcms/richtext-lexical"
+import { FixedToolbarFeature, lexicalEditor } from "@payloadcms/richtext-lexical"
 import type { Field } from "payload"
 
 import { linkGroup } from "@/payload/fields/linkGroup"
@@ -29,6 +29,10 @@ export const hero: Field = {
           label: "Low Impact",
           value: "lowImpact",
         },
+        {
+          label: "With Search",
+          value: "withSearch",
+        },
       ],
       required: true,
     },
@@ -36,14 +40,7 @@ export const hero: Field = {
       name: "richText",
       type: "richText",
       editor: lexicalEditor({
-        features: ({ rootFeatures }) => {
-          return [
-            ...rootFeatures,
-            HeadingFeature({ enabledHeadingSizes: ["h1", "h2", "h3", "h4"] }),
-            FixedToolbarFeature(),
-            InlineToolbarFeature(),
-          ]
-        },
+        features: ({ rootFeatures }) => [...rootFeatures, FixedToolbarFeature()],
       }),
       label: false,
     },
@@ -56,7 +53,7 @@ export const hero: Field = {
       name: "media",
       type: "upload",
       admin: {
-        condition: (_, { type } = {}) => ["highImpact", "mediumImpact"].includes(type),
+        condition: (_, { type } = {}) => ["highImpact", "mediumImpact", "withSearch"].includes(type),
       },
       relationTo: "media",
       required: true,
