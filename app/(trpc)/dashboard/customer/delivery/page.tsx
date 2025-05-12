@@ -275,7 +275,7 @@ export default function DeliveryPage() {
 
   // Addon Form
   const addonMutation = clientApi.delivery.updateAddon.useMutation()
-  const form = useForm<AddonSchemaType>({
+  const form = useForm({
     resolver: zodResolver(AddonSchema),
     mode: "onTouched",
   })

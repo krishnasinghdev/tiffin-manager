@@ -27,7 +27,6 @@ import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Form } from "@/components/ui/form"
-import { Label } from "@/components/ui/label"
 import { Pagination, PaginationContent, PaginationItem } from "@/components/ui/pagination"
 import { Table, TableAlert, TableBody, TableCell, TableHead, TableHeader, TableRow, TableSkeleton } from "@/components/ui/table"
 import CustomField from "@/components/custom-field"
@@ -281,7 +280,7 @@ export default function CustomerDeliveryPage() {
 
   // Custom Delivery Addon Form
   const addonMutation = clientApi.delivery.updateAddon.useMutation()
-  const form = useForm<AddonSchemaType>({
+  const form = useForm({
     resolver: zodResolver(AddonSchema),
     mode: "onTouched",
   })

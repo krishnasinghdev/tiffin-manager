@@ -4,7 +4,7 @@ import type { CollectionConfig } from "payload"
 
 import { Banner } from "@/payload/blocks/Banner/config"
 import { Code } from "@/payload/blocks/Code/config"
-import { MediaBlock } from "@/payload/blocks/MediaBlock/config"
+import { MediaBlock } from "@/payload/blocks/media-block/config"
 import { slugField } from "@/payload/fields/slug"
 import { generatePreviewPath } from "@/payload/payload-helpers"
 

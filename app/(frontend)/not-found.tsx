@@ -1,5 +1,6 @@
 import Link from "next/link"
-import { ArrowLeftIcon } from "lucide-react"
+
+import Icons from "@/lib/icons"
 
 export default function NotFound() {
   return (
@@ -67,7 +68,7 @@ export default function NotFound() {
           cursor: "pointer",
         }}
       >
-        <ArrowLeftIcon size={18} />
+        <Icons.ArrowLeft size={18} />
         Back to Home
       </Link>
     </div>

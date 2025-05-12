@@ -24,6 +24,7 @@ const staffRoleOptions = [
   { value: "staff", label: "Staff" },
   { value: "delivery", label: "Delivery" },
   { value: "kitchen", label: "Kitchen" },
+  { value: "manager", label: "Manager" },
 ]
 
 export default function StaffPage() {
@@ -35,7 +36,7 @@ export default function StaffPage() {
   const updateMutation = clientApi.staff.updateStaff.useMutation()
   const { data: staffs, isLoading, isError } = clientApi.staff.getStaffs.useQuery({})
 
-  const form = useForm<CreateStaffType>({
+  const form = useForm({
     resolver: zodResolver(CreateStaffSchema),
     mode: "onChange",
   })
@@ -102,16 +103,6 @@ export default function StaffPage() {
                 </div>
                 <CustomField type="password" control={form.control} name="password" label="Password" />
                 <div className="flex gap-4">
-                  {/* <CustomField type="radio" control={form.control} name="staff_role" label="Staff Role">
-                    {staffRoleOptions.map((option) => (
-                      <div className="flex items-center space-y-0 space-x-3" key={option.value}>
-                        <FormControl>
-                          <RadioGroupItem value={option.value} id={option.value} />
-                        </FormControl>
-                        <FormLabel className="font-normal">{option.value}</FormLabel>
-                      </div>
-                    ))}
-                  </CustomField> */}
                   <CustomField
                     type="select"
                     control={form.control}

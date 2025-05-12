@@ -1,6 +1,5 @@
 import React from "react"
 import Link from "next/link"
-import { SearchIcon } from "lucide-react"
 
 import type { Header } from "@/types/payload-types"
 import { CMSLink } from "@/payload/components/link"
@@ -20,10 +19,10 @@ export async function Header() {
           {headerData.navItems?.map(({ link }, i) => {
             return <CMSLink key={i} {...link} appearance="link" />
           })}
-          <Link href="/search">
+          {/* <Link href="/search">
             <span className="sr-only">Search</span>
             <SearchIcon className="text-primary w-5" />
-          </Link>
+          </Link> */}
         </nav>
       </div>
     </header>

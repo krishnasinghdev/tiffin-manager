@@ -268,7 +268,7 @@ export default function GenerateBillPage() {
 function BillForm({ billData, billType, onSubmit }: BillFormProps) {
   const [items, setItems] = useState<Array<{ name: string; quantity: number; price: string }>>([{ name: "", quantity: 1, price: "" }])
 
-  const form = useForm<CreateBillType>({
+  const form = useForm({
     resolver: zodResolver(CreateBillSchema),
     mode: "onTouched",
     defaultValues: {
@@ -387,7 +387,7 @@ function BillForm({ billData, billType, onSubmit }: BillFormProps) {
               <div className="flex justify-end border-t pt-4">
                 <div className="text-right">
                   <p className="text-sm font-medium">Total Amount</p>
-                  <p className="text-2xl font-bold">₹{form.watch("total_amount")}</p>
+                  <p className="text-2xl font-bold">₹{String(form.watch("total_amount"))}</p>
                 </div>
               </div>
             </CardContent>

@@ -27,7 +27,7 @@ export default function PlanPage() {
   const updateMutation = clientApi.plan.updatePlan.useMutation()
   const { data: plans, isLoading, isError } = clientApi.plan.getPlans.useQuery()
 
-  const form = useForm<CreatePlanType>({
+  const form = useForm({
     resolver: zodResolver(CreatePlanSchema),
     mode: "onTouched",
   })

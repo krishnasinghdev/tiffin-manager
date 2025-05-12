@@ -6,7 +6,7 @@ import { CallToActionBlock } from "@/payload/blocks/CallToAction/Component"
 import { ContentBlock } from "@/payload/blocks/Content/Component"
 import { FormBlock } from "@/payload/blocks/Form/Component"
 import { LocationGroupBlock } from "@/payload/blocks/location-group/component"
-import { MediaBlock } from "@/payload/blocks/MediaBlock/Component"
+import { MediaBlock } from "@/payload/blocks/media-block/Component"
 
 const blockComponents = {
   archive: ArchiveBlock,

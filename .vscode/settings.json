@@ -28,6 +28,12 @@
   "typescript.suggest.paths": true,
   "javascript.suggest.paths": true,
   "typescript.preferences.preferTypeOnlyAutoImports": true,
+  "typescript.preferences.autoImportSpecifierExcludeRegexes": [
+    "@radix-ui",
+    "next/router",
+    "next/dist",
+    "^lucide-react/dist/lucide-react.suffixed$"
+  ],
   // Formatting Settings
   "editor.formatOnSave": true,
   "prettier.requireConfig": true,

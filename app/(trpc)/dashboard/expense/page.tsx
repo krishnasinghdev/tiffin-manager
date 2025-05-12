@@ -186,7 +186,7 @@ export default function ExpensePage() {
   // Expense Form
   const expenseUpdateMutation = clientApi.expense.updateExpense.useMutation()
 
-  const form = useForm<CreateExpenseType>({
+  const form = useForm({
     resolver: zodResolver(CreateExpenseSchema),
     mode: "onTouched",
   })

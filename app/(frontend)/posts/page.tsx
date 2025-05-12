@@ -33,12 +33,11 @@ export default async function Page() {
         </div>
       </div>
 
-      <div className="container mb-8">
-        <PageRange collection="posts" currentPage={posts.page} limit={12} totalDocs={posts.totalDocs} />
-      </div>
-
       <CollectionArchive posts={posts.docs} relationTo="posts" />
 
+      <div className="container my-8">
+        <PageRange collection="posts" currentPage={posts.page} limit={12} totalDocs={posts.totalDocs} />
+      </div>
       <div className="container">
         {posts.totalPages > 1 && posts.page && <Pagination page={posts.page} totalPages={posts.totalPages} />}
       </div>

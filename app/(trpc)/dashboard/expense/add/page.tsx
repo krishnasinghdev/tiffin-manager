@@ -211,7 +211,7 @@ export default function AddExpensePage() {
 }
 
 function ExpenseForm({ staffId, expenseType, onSubmit }: ExpenseFormProps) {
-  const form = useForm<CreateExpenseType>({
+  const form = useForm({
     resolver: zodResolver(CreateExpenseSchema),
     mode: "onTouched",
   })

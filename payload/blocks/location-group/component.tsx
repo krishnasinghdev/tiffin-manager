@@ -16,7 +16,7 @@ export const LocationGroupBlock: React.FC<LocationGroupProps> = (props) => {
         </div>
       )}
       {locations && locations.length > 0 && (
-        <div className="grid grid-cols-1 gap-16 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           {locations.map((location, index) => (
             <Link
               href={typeof location.value === "object" && location.value.slug ? `/locations/${location.value.slug}` : "#"}

@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react"
 import { usePathname } from "next/navigation"
-import { Download, Wifi, WifiOff } from "lucide-react"
 import { toast } from "sonner"
 
 import env from "@/lib/env"
+import Icons from "@/lib/icons"
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>
@@ -22,14 +22,14 @@ export function NetworkStatus() {
     function onOffline() {
       toast.error("You are offline", {
         duration: Infinity,
-        icon: <WifiOff />,
+        icon: <Icons.WifiOff />,
       })
     }
 
     function onOnline() {
       toast.success("Back online", {
         duration: 2000,
-        icon: <Wifi />,
+        icon: <Icons.Wifi />,
       })
     }
 
@@ -76,7 +76,7 @@ export function NetworkStatus() {
     if (isDashboardPage && installPrompt && !isInstalled) {
       toast.message("Install our app for a better experience.", {
         duration: 10000,
-        icon: <Download size={18} />,
+        icon: <Icons.Download size={18} />,
         actionButtonStyle: { backgroundColor: "var(--color-primary)", color: "var(--color-foreground)" },
         action: {
           label: "Install",

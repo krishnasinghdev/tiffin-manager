@@ -392,37 +392,50 @@ export const billRouter = createTRPCRouter({
     const start = dayjs(billDetail.start_date)
     const end = dayjs(billDetail.end_date)
 
+    // Get all months between start and end dates inclusive
+    const months: string[] = []
+    let current = start.clone().startOf("month")
+    const endMonth = end.clone().startOf("month")
+
+    while (current.isBefore(endMonth)) {
+      months.push(current.format("YYYY-MM"))
+      current = current.add(1, "month")
+    }
+
     const deliveries = await ctx.db
       .select()
       .from(delivery)
       .where(
         and(
           eq(delivery.customer_id, billData.customer_id),
-          gte(delivery.month_year, start.format("YYYY-MM")),
-          lte(delivery.month_year, end.format("YYYY-MM"))
+          // Use 'in' operator to get all relevant months
+          sql`${delivery.month_year} IN ${months}`
         )
       )
-      .limit(1)
 
     const counts = deliveries.reduce(
       (acc: MealCounts, rec: DeliveryRecord) => {
         const [year, month] = rec.month_year.split("-").map(Number)
-        const base = dayjs(`${year}-${month}-01`)
+        const monthStart = dayjs(`${year}-${month}-01`)
+        const daysInMonth = monthStart.daysInMonth()
 
-        for (let d = 1; d <= 31; d++) {
+        for (let d = 1; d <= daysInMonth; d++) {
+          const currentDate = monthStart.date(d)
+          // Skip if date is outside bill period
+          if (currentDate.isBefore(start) || currentDate.isAfter(end)) continue
+
           const code = rec[`day${d}` as keyof DeliveryRecord] as string
           if (code?.length !== 3) continue
-
-          const date = base.date(d)
-          if (!date.isValid() || date.isBefore(start) || date.isAfter(end)) continue
 
           acc.b += code[0] === "P" ? 1 : 0
           acc.l += code[1] === "P" ? 1 : 0
           acc.d += code[2] === "P" ? 1 : 0
         }
+
+        // Handle add-ons within the bill period
         rec.add_ons?.forEach((addon: { day: number; amount: string }) => {
-          const date = base.date(addon.day)
-          if (date.isValid() && !date.isBefore(start) && !date.isAfter(end)) {
+          const addonDate = monthStart.date(addon.day)
+          if (addonDate.isAfter(start) && addonDate.isBefore(end)) {
             const amt = Number(addon.amount) || 0
             acc.aTotal += amt
             acc.aCount += amt > 0 ? 1 : 0

@@ -39,11 +39,11 @@ export default async function Page({ params: paramsPromise }: Args) {
         </div>
       </div>
 
-      <div className="container mb-8">
+      <CollectionArchive posts={posts.docs} relationTo="posts" />
+
+      <div className="container my-8">
         <PageRange collection="posts" currentPage={posts.page} limit={12} totalDocs={posts.totalDocs} />
       </div>
-
-      <CollectionArchive posts={posts.docs} relationTo="posts" />
 
       <div className="container">
         {posts?.page && posts?.totalPages > 1 && <Pagination page={posts.page} totalPages={posts.totalPages} />}

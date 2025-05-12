@@ -56,7 +56,7 @@ export default function BillPage() {
     id: Number(params.id),
   })
 
-  const form = useForm<UpdateBillType>({
+  const form = useForm({
     resolver: zodResolver(UpdateBillSchema),
     mode: "onBlur",
     defaultValues: {

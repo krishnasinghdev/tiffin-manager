@@ -9,7 +9,7 @@ import type {
 import { BannerBlock } from "@/payload/blocks/Banner/Component"
 import { CallToActionBlock } from "@/payload/blocks/CallToAction/Component"
 import { CodeBlock, CodeBlockProps } from "@/payload/blocks/Code/Component"
-import { MediaBlock } from "@/payload/blocks/MediaBlock/Component"
+import { MediaBlock } from "@/payload/blocks/media-block/Component"
 import { cn } from "@/lib/utils"
 
 type NodeTypes = DefaultNodeTypes | SerializedBlockNode<CTABlockProps | MediaBlockProps | BannerBlockProps | CodeBlockProps>

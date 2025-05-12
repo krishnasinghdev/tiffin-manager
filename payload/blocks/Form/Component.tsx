@@ -9,6 +9,7 @@ import { FormProvider, useForm } from "react-hook-form"
 import RichText from "@/payload/components/richtext"
 import { Button } from "@/payload/components/ui/button"
 import { getClientSideURL } from "@/payload/payload-helpers"
+import { cn } from "@/lib/utils"
 
 import { fields } from "./fields"
 

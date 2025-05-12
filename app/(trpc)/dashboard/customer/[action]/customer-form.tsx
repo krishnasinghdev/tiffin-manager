@@ -44,7 +44,7 @@ export default function CustomerForm({ defaultValues }: CustomerAddPageProps) {
   const createMutation = clientApi.customer.createCustomer.useMutation()
   const updateMutation = clientApi.customer.updateCustomer.useMutation()
 
-  const form = useForm<CustomerType>({
+  const form = useForm({
     resolver: zodResolver(customerSchema),
     mode: "onTouched",
     defaultValues: defaultValues || {

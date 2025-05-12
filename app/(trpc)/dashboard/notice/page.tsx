@@ -25,7 +25,7 @@ export default function NoticePage() {
   const createMutation = clientApi.notice.createNotice.useMutation()
   const updateMutation = clientApi.notice.updateNotice.useMutation()
 
-  const form = useForm<CreateNoticeType>({
+  const form = useForm({
     resolver: zodResolver(CreateNoticeSchema),
     mode: "onTouched",
   })

@@ -1,7 +1,6 @@
 import { formBuilderPlugin } from "@payloadcms/plugin-form-builder"
 import { nestedDocsPlugin } from "@payloadcms/plugin-nested-docs"
 import { redirectsPlugin } from "@payloadcms/plugin-redirects"
-import { searchPlugin } from "@payloadcms/plugin-search"
 import { seoPlugin } from "@payloadcms/plugin-seo"
 import { GenerateTitle, GenerateURL } from "@payloadcms/plugin-seo/types"
 import { FixedToolbarFeature, lexicalEditor } from "@payloadcms/richtext-lexical"
@@ -11,8 +10,6 @@ import { Plugin } from "payload"
 import { Page, Post } from "@/types/payload-types"
 import { revalidateRedirects } from "@/payload/hooks/revalidate-redirects"
 import { getServerSideURL } from "@/payload/payload-helpers"
-import { beforeSyncWithSearch } from "@/payload/search/before-sync"
-import { searchFields } from "@/payload/search/field-overrides"
 import env from "@/lib/env"
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
@@ -73,15 +70,6 @@ export const plugins: Plugin[] = [
           }
           return field
         })
-      },
-    },
-  }),
-  searchPlugin({
-    collections: ["posts"],
-    beforeSync: beforeSyncWithSearch,
-    searchOverrides: {
-      fields: ({ defaultFields }) => {
-        return [...defaultFields, ...searchFields]
       },
     },
   }),
