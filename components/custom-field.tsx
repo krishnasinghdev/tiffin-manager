@@ -182,7 +182,7 @@ function RenderInput<
             {...field}
             type="number"
             min={0}
-            step="0.01"
+            step="1"
             disabled={disabled}
             value={field.value ?? ""}
             onChange={(e) => field.onChange(e.target.valueAsNumber)}
