@@ -8,13 +8,14 @@ import { getBadgeColor } from "@/lib/helper-functions"
 import Icons from "@/lib/icons"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Table, TableAlert, TableBody, TableCell, TableHead, TableHeader, TableRow, TableSkeleton } from "@/components/ui/table"
 import { clientApi } from "@/components/trpc-provider"
 
 // Types
-type AttendanceStatus = "P" | "A" | "L"
+type AttendanceStatus = "P" | "A"
 
 interface StaffAttendanceRecord {
   staff_id: number
@@ -46,12 +47,12 @@ interface SingleStaffAttendanceResponse {
 type OptionsType = {
   id?: number | string
   shift?: "morning" | "evening"
-  value?: AttendanceStatus
+  value?: boolean
 }
 
-type AttendanceRadioType = {
+type AttendanceCheckboxType = {
   value: string
-  onChange: (value: AttendanceStatus) => void
+  onChange: (value: boolean) => void
   idPrefix: string
 }
 
@@ -63,15 +64,11 @@ const parseAsDate = createParser({
   eq: (a, b) => dayjs(a).isSame(dayjs(b), "day"),
 })
 
-const AttendanceRadioGroup = ({ value, onChange, idPrefix }: AttendanceRadioType) => (
-  <RadioGroup value={value} onValueChange={onChange} className="flex space-x-2">
-    {["P", "A", "L"].map((status) => (
-      <div key={`${idPrefix}-${status}`} className="flex items-center space-x-1">
-        <RadioGroupItem value={status} id={`${idPrefix}-${status}`} />
-        <Label htmlFor={`${idPrefix}-${status}`}>{status}</Label>
-      </div>
-    ))}
-  </RadioGroup>
+const AttendanceCheckbox = ({ value, onChange, idPrefix }: AttendanceCheckboxType) => (
+  <div className="flex items-center space-x-2">
+    <Checkbox id={idPrefix} checked={value === "P"} onCheckedChange={(checked) => onChange(checked as boolean)} />
+    <Label htmlFor={idPrefix}>{value}</Label>
+  </div>
 )
 
 // Main Component
@@ -130,11 +127,13 @@ export default function StaffAttendancePage() {
     if (!data) return
 
     if (isSingleStaff && singleAttendance) {
-      if (type === "change" && options.id && options.shift && options.value) {
+      if (type === "change" && options.id && options.shift && options.value !== undefined) {
         const updatedData: SingleStaffAttendanceResponse = {
           ...singleAttendance,
           data: singleAttendance.data.map((item) =>
-            dayjs(item.date).format("YYYY-MM-DD") === options.id ? { ...item, [options.shift as string]: options.value } : item
+            dayjs(item.date).format("YYYY-MM-DD") === options.id
+              ? { ...item, [options.shift as string]: options.value ? "P" : "A" }
+              : item
           ),
         }
         utils.staffattendance.getStaffMonthAttendance.setData({ id: staffId, date: currentDate.format(DATE_FORMAT) }, updatedData)
@@ -149,11 +148,11 @@ export default function StaffAttendancePage() {
     }
 
     if (!isSingleStaff && DailyAttendance) {
-      if (type === "change" && options.id && options.shift && options.value) {
+      if (type === "change" && options.id && options.shift && options.value !== undefined) {
         const updatedData = {
           ...DailyAttendance,
           data: DailyAttendance.data.map((staff) =>
-            staff.staff_id === options.id ? { ...staff, [options.shift as string]: options.value } : staff
+            staff.staff_id === options.id ? { ...staff, [options.shift as string]: options.value ? "P" : "A" } : staff
           ),
         }
         utils.staffattendance.getDailyAttendance.setData({ date: currentDate.format(DATE_FORMAT) }, updatedData)
@@ -271,14 +270,14 @@ export default function StaffAttendancePage() {
                   <Badge className={getBadgeColor(staff.staff_role)}>{staff.staff_role}</Badge>
                 </TableCell>
                 <TableCell className="p-4">
-                  <AttendanceRadioGroup
+                  <AttendanceCheckbox
                     value={staff.morning}
                     onChange={(value) => handleAttendanceUpdate("change", { id: staff.staff_id, shift: "morning", value })}
                     idPrefix={`morning-${staff.id ?? staff.staff_id}`}
                   />
                 </TableCell>
                 <TableCell className="p-4">
-                  <AttendanceRadioGroup
+                  <AttendanceCheckbox
                     value={staff.evening}
                     onChange={(value) => handleAttendanceUpdate("change", { id: staff.staff_id, shift: "evening", value })}
                     idPrefix={`evening-${staff.id ?? staff.staff_id}`}
@@ -292,7 +291,7 @@ export default function StaffAttendancePage() {
               <TableRow key={i} className="even:bg-muted/40 hover:bg-transparent">
                 <TableCell>{dayjs(record.date).format("DD MMM, YY")}</TableCell>
                 <TableCell className="p-4">
-                  <AttendanceRadioGroup
+                  <AttendanceCheckbox
                     value={record.morning}
                     onChange={(value) =>
                       handleAttendanceUpdate("change", { id: dayjs(record.date).format("YYYY-MM-DD"), shift: "morning", value })
@@ -301,7 +300,7 @@ export default function StaffAttendancePage() {
                   />
                 </TableCell>
                 <TableCell className="p-4">
-                  <AttendanceRadioGroup
+                  <AttendanceCheckbox
                     value={record.evening}
                     onChange={(value) =>
                       handleAttendanceUpdate("change", { id: dayjs(record.date).format("YYYY-MM-DD"), shift: "evening", value })
@@ -315,7 +314,7 @@ export default function StaffAttendancePage() {
       </Table>
 
       <footer className="text-muted-foreground text-sm">
-        <p>P = Present, A = Absent, L = Leave</p>
+        <p>P = Present, A = Absent</p>
       </footer>
     </div>
   )

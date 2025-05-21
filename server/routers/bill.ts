@@ -392,12 +392,12 @@ export const billRouter = createTRPCRouter({
     const start = dayjs(billDetail.start_date)
     const end = dayjs(billDetail.end_date)
 
-    // Get all months between start and end dates inclusive
+    // Get all months between start and end dates inclusive, plus one month after end date
     const months: string[] = []
     let current = start.clone().startOf("month")
-    const endMonth = end.clone().startOf("month")
+    const endMonth = end.clone().startOf("month").add(1, "month") // Add one month to include next month
 
-    while (current.isBefore(endMonth)) {
+    while (current.isBefore(endMonth) || current.isSame(endMonth, "month")) {
       months.push(current.format("YYYY-MM"))
       current = current.add(1, "month")
     }
@@ -405,13 +405,7 @@ export const billRouter = createTRPCRouter({
     const deliveries = await ctx.db
       .select()
       .from(delivery)
-      .where(
-        and(
-          eq(delivery.customer_id, billData.customer_id),
-          // Use 'in' operator to get all relevant months
-          sql`${delivery.month_year} IN ${months}`
-        )
-      )
+      .where(and(eq(delivery.customer_id, billData.customer_id), sql`${delivery.month_year} IN ${months}`))
 
     const counts = deliveries.reduce(
       (acc: MealCounts, rec: DeliveryRecord) => {

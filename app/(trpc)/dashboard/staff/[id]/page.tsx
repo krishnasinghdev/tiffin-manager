@@ -80,7 +80,7 @@ export default function SingleStaffPage({ params }: Props) {
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Recent Payments</CardTitle>
           <Link
-            href={`/dashboard/expense/add?staff_id=${id}&staff_name=${staffData.name}`}
+            href={`/dashboard/expense/add?staff_id=${id}&staff_name=${staffData.name}&expense_type=salary`}
             className={cn(buttonVariants({ variant: "default" }))}
           >
             <Icons.ReceiptIndianRupee />
